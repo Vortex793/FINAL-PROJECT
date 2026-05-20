@@ -9,6 +9,12 @@ namespace FINAL_PROJECT
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        Rectangle window
+
+        List<Texture2D> grampsDownFrames = new List<Texture2D>();
+        List<Texture2D> grampsUpFrames = new List<Texture2D>();
+        List<Texture2D> grampsRightFrames = new List<Texture2D>();
+        List<Texture2D> grampsLeftFrames = new List<Texture2D>();
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -28,6 +34,15 @@ namespace FINAL_PROJECT
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            //Down
+            grampsDownFrames.Add(Content.Load<Texture2D>("grampsIdleDown"));
+            grampsDownFrames.Add(Content.Load<Texture2D>("grampsWalk1Down"));
+            grampsDownFrames.Add(Content.Load<Texture2D>("grampsWalk2Down"));
+
+            //Up
+            grampsUpFrames.Add(Content.Load<Texture2D>("grampsIdleUp"));
+            grampsUpFrames.Add(Content.Load<Texture2D>("grampsWalk1Up"));
+            grampsUpFrames.Add(Content.Load<Texture2D>("grampsWalk2Up"));
         }
 
         protected override void Update(GameTime gameTime)
