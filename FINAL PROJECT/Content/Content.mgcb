@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin down/grampsIdleDown.png
+#begin grampsIdleDown.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,9 +23,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:down/grampsIdleDown.png
+/build:grampsIdleDown.png
 
-#begin down/grampsWalk1Down.png
+#begin grampsIdleLeft.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -35,9 +35,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:down/grampsWalk1Down.png
+/build:grampsIdleLeft.png
 
-#begin down/grampsWalk2Down.png
+#begin grampsIdleRight.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,9 +47,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:down/grampsWalk2Down.png
+/build:grampsIdleRight.png
 
-#begin left/grampsIdleLeft.png
+#begin grampsIdleUp.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -59,9 +59,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:left/grampsIdleLeft.png
+/build:grampsIdleUp.png
 
-#begin left/grampsWalk1Left.png
+#begin grampsWalk1Down.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,9 +71,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:left/grampsWalk1Left.png
+/build:grampsWalk1Down.png
 
-#begin left/grampsWalk2Left.png
+#begin grampsWalk1Left.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,9 +83,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:left/grampsWalk2Left.png
+/build:grampsWalk1Left.png
 
-#begin right/grampsIdleRight.png
+#begin grampsWalk1Right.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -95,9 +95,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:right/grampsIdleRight.png
+/build:grampsWalk1Right.png
 
-#begin right/grampsWalk1Right.png
+#begin grampsWalk1Up.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -107,9 +107,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:right/grampsWalk1Right.png
+/build:grampsWalk1Up.png
 
-#begin right/grampsWalk2Right.png
+#begin grampsWalk2Down.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -119,9 +119,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:right/grampsWalk2Right.png
+/build:grampsWalk2Down.png
 
-#begin up/grampsIdleRight.png
+#begin grampsWalk2Left.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -131,9 +131,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:up/grampsIdleRight.png
+/build:grampsWalk2Left.png
 
-#begin up/grampsWalk1Right.png
+#begin grampsWalk2Right.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -143,9 +143,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:up/grampsWalk1Right.png
+/build:grampsWalk2Right.png
 
-#begin up/grampsWalk2Right.png
+#begin grampsWalk2Up.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -155,5 +155,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:up/grampsWalk2Right.png
+/build:grampsWalk2Up.png
 

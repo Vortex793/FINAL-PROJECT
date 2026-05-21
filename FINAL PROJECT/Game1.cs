@@ -10,65 +10,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace FINAL_PROJECT
 {
-    public class gramps
-    {
-        Vector2 position;
-
-        float speed = 2f;
-
-        public List<Texture2D> downFrames;
-        public List<Texture2D> upFrames;
-        public List<Texture2D> rightFrames;
-        public List<Texture2D> leftFrames;
-        public List<Texture2D> currentFrames;
-        public gramps(List<Texture2D> down, List<Texture2D> up, List<Texture2D> right, List<Texture2D> left)
-        {
-            downFrames = down;
-            upFrames = up;
-            rightFrames = right;
-            leftFrames = left;
-            currentFrames = downFrames;
-            position = new Vector2(300, 200);
-        }
-        public void Update()
-        {
-            KeyboardState keyboard = Keyboard.GetState();
-
-            if (keyboard.IsKeyDown(Keys.W))
-            {
-                position.Y -= speed;
-                currentFrames = downFrames;
-            }
-            else if (keyboard.IsKeyDown(Keys.S))
-            {
-                position.Y += speed;
-                currentFrames = upFrames;
-            }
-            else if (keyboard.IsKeyDown(Keys.A))
-            {
-                position.X -= speed;
-                currentFrames = leftFrames;
-            }
-            else if (keyboard.IsKeyDown(Keys.D))
-            {
-                position.X += speed;
-                currentFrames = rightFrames;
-            }
-        }
-     
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if (currentFrames.Count > 0)
-            {
-                spriteBatch.Draw(currentFrames[0], position, Color.White);
-            }
-        }
-    }
 
         public class Game1 : Game
         {
             private GraphicsDeviceManager _graphics;
             private SpriteBatch _spriteBatch;
+            gramps gramps;
 
             Rectangle window;
 
@@ -85,8 +32,8 @@ namespace FINAL_PROJECT
 
             protected override void Initialize()
             {
-                // TODO: Add your initialization logic here
-
+            // TODO: Add your initialization logic here
+            
                 base.Initialize();
             }
 
@@ -114,6 +61,8 @@ namespace FINAL_PROJECT
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsIdleLeft"));
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk1Left"));
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk2Left"));
+
+                gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
             }
 
             protected override void Update(GameTime gameTime)
@@ -121,11 +70,12 @@ namespace FINAL_PROJECT
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     Exit();
 
-                // TODO: Add your update logic here
-                KeyboardState keyboard = Keyboard.GetState();
+                gramps.Update();
 
                 base.Update(gameTime);
-            }
+                // TODO: Add your update logic here
+
+        }
 
             protected override void Draw(GameTime gameTime)
             {
@@ -133,8 +83,15 @@ namespace FINAL_PROJECT
 
                 // TODO: Add your drawing code here
 
+
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
+                gramps.Draw(_spriteBatch);
+
+                _spriteBatch.End();
+
                 base.Draw(gameTime);
-            }
+        }
         }
     }
 
