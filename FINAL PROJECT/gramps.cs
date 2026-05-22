@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Transactions;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml;
 
 namespace FINAL_PROJECT
 {
@@ -15,9 +16,9 @@ namespace FINAL_PROJECT
         private Rectangle position;
 
         float speed;
-
+        bool playerWalking = false;
         Vector2 velocity;
-
+        int frameTimer, frame;
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
         public List<Texture2D> rightFrames;
@@ -32,7 +33,7 @@ namespace FINAL_PROJECT
             rightFrames = right;
             leftFrames = left;
             currentFrames = downFrames;
-            position = new Rectangle(300, 200, 100,100);
+            position = new Rectangle(300, 200, 50, 50);
         }
         public void Update()
         {
@@ -42,21 +43,25 @@ namespace FINAL_PROJECT
             {
                 velocity.Y -= speed;
                 currentFrames = upFrames;
+                playerWalking = true;
             }
             if (keyboard.IsKeyDown(Keys.S))
             {
                 velocity.Y += speed;
                 currentFrames = downFrames;
+                playerWalking = true;
             }
             if (keyboard.IsKeyDown(Keys.A))
             {
                 velocity.X -= speed;
                 currentFrames = leftFrames;
+                playerWalking = true;
             }
             if (keyboard.IsKeyDown(Keys.D))
             {
                 velocity.X += speed;
                 currentFrames = rightFrames;
+                playerWalking = true;
             }
 
             if (!(velocity.X != 0 && velocity.Y != 0))
@@ -64,7 +69,22 @@ namespace FINAL_PROJECT
                 position.X += (int)velocity.X;
                 position.Y += (int)velocity.Y;
             }
+
+
             
+
+            if (playerWalking)
+            {
+                frameTimer += GameTime.ElapsedGameTime.TotalSeconds;
+
+                if (frameTimer > 0.08)
+                {
+                    frame++;
+                    frameTimer = 0;
+                    frame = frame %
+                }
+                //DO FOUR
+            }
 
         }
 

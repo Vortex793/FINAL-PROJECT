@@ -17,8 +17,10 @@ namespace FINAL_PROJECT
             private SpriteBatch _spriteBatch;
             gramps gramps;
 
+            Rectangle storeRect;
+            Texture2D storeTexture;
             Rectangle window;
-
+            
             List<Texture2D> grampsDownFrames = new List<Texture2D>();
             List<Texture2D> grampsUpFrames = new List<Texture2D>();
             List<Texture2D> grampsRightFrames = new List<Texture2D>();
@@ -32,8 +34,12 @@ namespace FINAL_PROJECT
 
             protected override void Initialize()
             {
+                window = new Rectangle(0, 0, 800, 600);
+                _graphics.PreferredBackBufferWidth = window.Width;
+                _graphics.PreferredBackBufferHeight = window.Height;
+                _graphics.ApplyChanges();
             // TODO: Add your initialization logic here
-            
+            storeRect = new Rectangle(0, 0, 800, 600);
                 base.Initialize();
             }
 
@@ -63,7 +69,8 @@ namespace FINAL_PROJECT
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk2Left"));
 
                 gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
-            }
+                storeTexture = Content.Load<Texture2D>("store");
+        }
 
             protected override void Update(GameTime gameTime)
             {
@@ -86,7 +93,9 @@ namespace FINAL_PROJECT
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+                _spriteBatch.Draw(storeTexture, storeRect, Color.White);
                 gramps.Draw(_spriteBatch);
+                
 
                 _spriteBatch.End();
 
@@ -94,4 +103,3 @@ namespace FINAL_PROJECT
         }
         }
     }
-
