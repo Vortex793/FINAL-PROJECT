@@ -97,13 +97,17 @@ namespace FINAL_PROJECT
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
+               
                 _spriteBatch.Draw(storeTexture, storeRect, Color.White);
-                gramps.Draw(_spriteBatch);
+                
                 _spriteBatch.Draw(itemTextures, storeRect, Color.White);
-
+            gramps.Draw(_spriteBatch);
             _spriteBatch.End();
 
                 base.Draw(gameTime);
         }
         }
     }
+
+
+

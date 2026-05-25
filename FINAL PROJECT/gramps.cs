@@ -35,7 +35,7 @@ namespace FINAL_PROJECT
             rightFrames = right;
             leftFrames = left;
             currentFrames = downFrames;
-            position = new Rectangle(300, 200, 50, 50);
+            position = new Rectangle(300, 200, 35, 50);
         }
         public void Update(GameTime gameTime)
         {
