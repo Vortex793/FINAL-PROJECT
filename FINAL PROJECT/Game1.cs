@@ -18,7 +18,7 @@ namespace FINAL_PROJECT
             gramps gramps;
 
             Rectangle storeRect;
-            Texture2D storeTexture;
+            Texture2D storeTexture, itemTextures;
             Rectangle window;
             
             List<Texture2D> grampsDownFrames = new List<Texture2D>();
@@ -39,7 +39,7 @@ namespace FINAL_PROJECT
                 _graphics.PreferredBackBufferHeight = window.Height;
                 _graphics.ApplyChanges();
             // TODO: Add your initialization logic here
-            storeRect = new Rectangle(0, 0, 800, 600);
+                storeRect = new Rectangle(0, 0, 800, 600);
                 base.Initialize();
             }
 
@@ -67,9 +67,13 @@ namespace FINAL_PROJECT
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsIdleLeft"));
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk1Left"));
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk2Left"));
+             
+
+                
 
                 gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
-                storeTexture = Content.Load<Texture2D>("store");
+                storeTexture = Content.Load<Texture2D>("walls");
+                itemTextures = Content.Load<Texture2D>("items");
         }
 
             protected override void Update(GameTime gameTime)
@@ -77,7 +81,7 @@ namespace FINAL_PROJECT
                 if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                     Exit();
 
-                gramps.Update();
+                gramps.Update(gameTime);
 
                 base.Update(gameTime);
                 // TODO: Add your update logic here
@@ -95,9 +99,9 @@ namespace FINAL_PROJECT
 
                 _spriteBatch.Draw(storeTexture, storeRect, Color.White);
                 gramps.Draw(_spriteBatch);
-                
+                _spriteBatch.Draw(itemTextures, storeRect, Color.White);
 
-                _spriteBatch.End();
+            _spriteBatch.End();
 
                 base.Draw(gameTime);
         }

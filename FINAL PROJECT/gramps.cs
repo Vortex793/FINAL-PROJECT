@@ -18,7 +18,9 @@ namespace FINAL_PROJECT
         float speed;
         bool playerWalking = false;
         Vector2 velocity;
-        int frameTimer, frame;
+        float frameTimer;
+        int frame;
+
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
         public List<Texture2D> rightFrames;
@@ -35,8 +37,9 @@ namespace FINAL_PROJECT
             currentFrames = downFrames;
             position = new Rectangle(300, 200, 50, 50);
         }
-        public void Update()
+        public void Update(GameTime gameTime)
         {
+            playerWalking = false;
             KeyboardState keyboard = Keyboard.GetState();
             velocity = Vector2.Zero;
             if (keyboard.IsKeyDown(Keys.W))
@@ -75,24 +78,31 @@ namespace FINAL_PROJECT
 
             if (playerWalking)
             {
-                frameTimer += GameTime.ElapsedGameTime.TotalSeconds;
+                frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (frameTimer > 0.08)
+                if (frameTimer > 0.20f)
                 {
                     frame++;
-                    frameTimer = 0;
-                    frame = frame %
+                    if(frame > 2)
+                    {
+                        frame = 1;
+                    }
+                    frameTimer = 0f;
+                   
                 }
                 //DO FOUR
             }
-
+            else
+            {
+                frame = 0;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             if (currentFrames.Count > 0)
             {
-                spriteBatch.Draw(currentFrames[0], position, Color.White);
+                spriteBatch.Draw(currentFrames[frame], position, Color.White);
             }
         }
     }
