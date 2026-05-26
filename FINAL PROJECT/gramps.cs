@@ -97,7 +97,20 @@ namespace FINAL_PROJECT
                 frame = 0;
             }
         }
+        public Rectangle Hitbox
+        {
+            get { return position; }
+        }
 
+        public void MoveBack(Vector2 amount)
+        {
+            position.X -= (int)amount.X;
+            position.Y -= (int)amount.Y;
+        }
+        public Vector2 Velocity
+        {
+            get { return velocity; }
+        }
         public void Draw(SpriteBatch spriteBatch)
         {
             if (currentFrames.Count > 0)

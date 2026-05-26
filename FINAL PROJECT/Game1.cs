@@ -25,6 +25,9 @@ namespace FINAL_PROJECT
             List<Texture2D> grampsUpFrames = new List<Texture2D>();
             List<Texture2D> grampsRightFrames = new List<Texture2D>();
             List<Texture2D> grampsLeftFrames = new List<Texture2D>();
+
+            Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
+            Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2;
             public Game1()
             {
                 _graphics = new GraphicsDeviceManager(this);
@@ -40,6 +43,9 @@ namespace FINAL_PROJECT
                 _graphics.ApplyChanges();
             // TODO: Add your initialization logic here
                 storeRect = new Rectangle(0, 0, 800, 600);
+                wallBarrier = new Rectangle(0, 0, 1000, 130);
+                recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
+                recordCrateBarrier2 = new Rectangle(260, 258, 322, 43);
                 base.Initialize();
             }
 
@@ -74,6 +80,9 @@ namespace FINAL_PROJECT
                 gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
                 storeTexture = Content.Load<Texture2D>("walls");
                 itemTextures = Content.Load<Texture2D>("items");
+                wallTexture = Content.Load<Texture2D>("wallTexture");
+                recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
+                recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
         }
 
             protected override void Update(GameTime gameTime)
@@ -84,7 +93,11 @@ namespace FINAL_PROJECT
                 gramps.Update(gameTime);
 
                 base.Update(gameTime);
-                // TODO: Add your update logic here
+            // TODO: Add your update logic here
+                if (gramps.Hitbox.Intersects(wallBarrier))
+                {
+                    gramps.MoveBack(gramps.Velocity);
+                }
 
         }
 
@@ -97,11 +110,13 @@ namespace FINAL_PROJECT
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-               
-                _spriteBatch.Draw(storeTexture, storeRect, Color.White);
+            _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
+            _spriteBatch.Draw(storeTexture, storeRect, Color.White);
                 
                 _spriteBatch.Draw(itemTextures, storeRect, Color.White);
             gramps.Draw(_spriteBatch);
+                _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
+            _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White); //where i left off
             _spriteBatch.End();
 
                 base.Draw(gameTime);
