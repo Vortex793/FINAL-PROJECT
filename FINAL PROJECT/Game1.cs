@@ -25,7 +25,9 @@ namespace FINAL_PROJECT
             List<Texture2D> grampsUpFrames = new List<Texture2D>();
             List<Texture2D> grampsRightFrames = new List<Texture2D>();
             List<Texture2D> grampsLeftFrames = new List<Texture2D>();
-
+            
+            List<customer> customerSprites = new List<customer>();
+            customer customerNPC;
             Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
             Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2;
             public Game1()
@@ -45,7 +47,7 @@ namespace FINAL_PROJECT
                 storeRect = new Rectangle(0, 0, 800, 600);
                 wallBarrier = new Rectangle(0, 0, 1000, 130);
                 recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
-                recordCrateBarrier2 = new Rectangle(260, 258, 322, 43);
+                recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
                 base.Initialize();
             }
 
@@ -75,9 +77,35 @@ namespace FINAL_PROJECT
                 grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk2Left"));
              
 
+                customer customer1 = new customer();
                 
-
-                gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
+                customer1.downFrames = new List<Texture2D>()
+                {
+                    Content.Load<Texture2D>("customer1IdleDown"),
+                    Content.Load<Texture2D>("customer1Walk1Down"),
+                    Content.Load<Texture2D>("customer1Walk2Down")
+                };
+                customer1.upFrames = new List<Texture2D>()
+                {
+                    Content.Load<Texture2D>("customer1IdleUp"),
+                    Content.Load<Texture2D>("customer1Walk1Up"),
+                    Content.Load<Texture2D>("customer1Walk2Up")
+                };
+                customer1.rightFrames = new List<Texture2D>()
+                {
+                    Content.Load<Texture2D>("customer1IdleRight"),
+                    Content.Load<Texture2D>("customer1Walk1Right"),
+                    Content.Load<Texture2D>("customer1Walk2Right")
+                };
+                customer1.leftFrames = new List<Texture2D>()
+                {
+                    Content.Load<Texture2D>("customer1IdleLeft"),
+                    Content.Load<Texture2D>("customer1Walk1Left"),
+                    Content.Load<Texture2D>("customer1Walk2Left")
+                };
+                customerSprites.Add(customer1);
+                customerNPC = customer1;
+            gramps = new gramps(grampsDownFrames, grampsUpFrames,grampsRightFrames, grampsLeftFrames);
                 storeTexture = Content.Load<Texture2D>("walls");
                 itemTextures = Content.Load<Texture2D>("items");
                 wallTexture = Content.Load<Texture2D>("wallTexture");
@@ -94,11 +122,12 @@ namespace FINAL_PROJECT
 
                 base.Update(gameTime);
             // TODO: Add your update logic here
-                if (gramps.Hitbox.Intersects(wallBarrier))
+                if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
                 {
                     gramps.MoveBack(gramps.Velocity);
                 }
-
+                
+                customerNPC.Update(gameTime);
         }
 
             protected override void Draw(GameTime gameTime)
@@ -110,14 +139,14 @@ namespace FINAL_PROJECT
 
                 _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
-            _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
-            _spriteBatch.Draw(storeTexture, storeRect, Color.White);
-                
-                _spriteBatch.Draw(itemTextures, storeRect, Color.White);
-            gramps.Draw(_spriteBatch);
+                _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
+                _spriteBatch.Draw(storeTexture, storeRect, Color.White);
                 _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
-            _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White); //where i left off
-            _spriteBatch.End();
+                _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
+                _spriteBatch.Draw(itemTextures, storeRect, Color.White);
+                gramps.Draw(_spriteBatch);
+                customerNPC.Draw(_spriteBatch);
+                _spriteBatch.End();
 
                 base.Draw(gameTime);
         }
