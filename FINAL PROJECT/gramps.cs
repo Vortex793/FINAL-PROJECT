@@ -36,6 +36,7 @@ namespace FINAL_PROJECT
             leftFrames = left;
             currentFrames = downFrames;
             position = new Rectangle(300, 200, 35, 50);
+            int money = 500;
         }
         public void Update(GameTime gameTime)
         {
