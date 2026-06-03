@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Transactions;
+using System.Numerics;
 using System.Security.Cryptography.X509Certificates;
+using System.Transactions;
 
 namespace FINAL_PROJECT
 {
@@ -16,6 +17,8 @@ namespace FINAL_PROJECT
             private GraphicsDeviceManager _graphics;
             private SpriteBatch _spriteBatch;
             gramps gramps;
+
+
 
             Rectangle storeRect;
             Texture2D storeTexture, itemTextures;
@@ -128,6 +131,11 @@ namespace FINAL_PROJECT
                 }
                 
                 customerNPC.Update(gameTime);
+
+                if (gramps.rockCrateOwned)
+                {
+                // gameplay logic
+                }
         }
 
             protected override void Draw(GameTime gameTime)
@@ -146,6 +154,7 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(itemTextures, storeRect, Color.White);
                 gramps.Draw(_spriteBatch);
                 customerNPC.Draw(_spriteBatch);
+
                 _spriteBatch.End();
 
                 base.Draw(gameTime);

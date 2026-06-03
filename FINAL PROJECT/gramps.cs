@@ -20,6 +20,10 @@ namespace FINAL_PROJECT
         Vector2 velocity;
         float frameTimer;
         int frame;
+        bool rockCrateOwned = false;
+        bool metalCrateOwned = false;
+        bool hipHopCrateOwned = false;
+        bool jazzCrateOwned = false;
 
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
@@ -118,6 +122,8 @@ namespace FINAL_PROJECT
             {
                 spriteBatch.Draw(currentFrames[frame], position, Color.White);
             }
+
+
         }
     }
 }
