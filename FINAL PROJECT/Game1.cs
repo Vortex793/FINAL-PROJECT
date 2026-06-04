@@ -33,6 +33,8 @@ namespace FINAL_PROJECT
             customer customerNPC;
             Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
             Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2;
+            Texture2D rockCrateTexture;
+            Vector2 rockCratePosition = new Vector2(800, 600);
             public Game1()
             {
                 _graphics = new GraphicsDeviceManager(this);
@@ -81,7 +83,8 @@ namespace FINAL_PROJECT
              
 
                 customer customer1 = new customer();
-                
+
+                rockCrateTexture = Content.Load<Texture2D>("Record Crate Rock");
                 customer1.downFrames = new List<Texture2D>()
                 {
                     Content.Load<Texture2D>("customer1IdleDown"),
@@ -132,10 +135,7 @@ namespace FINAL_PROJECT
                 
                 customerNPC.Update(gameTime);
 
-                if (gramps.rockCrateOwned)
-                {
-                // gameplay logic
-                }
+
         }
 
             protected override void Draw(GameTime gameTime)
@@ -154,8 +154,11 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(itemTextures, storeRect, Color.White);
                 gramps.Draw(_spriteBatch);
                 customerNPC.Draw(_spriteBatch);
-
-                _spriteBatch.End();
+                if (gramps.RockCrateOwned)
+                {
+                _spriteBatch.Draw(rockCrateTexture,  Color.White);
+                }
+            _spriteBatch.End();
 
                 base.Draw(gameTime);
         }

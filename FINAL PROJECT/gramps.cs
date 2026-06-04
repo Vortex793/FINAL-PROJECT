@@ -106,7 +106,11 @@ namespace FINAL_PROJECT
         {
             get { return position; }
         }
-
+        public bool RockCrateOwned
+        {
+            get { return rockCrateOwned; }
+            set { rockCrateOwned = value; }
+        }
         public void MoveBack(Vector2 amount)
         {
             position.X -= (int)amount.X;
