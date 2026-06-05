@@ -20,7 +20,7 @@ namespace FINAL_PROJECT
         Vector2 velocity;
         float frameTimer;
         int frame;
-        bool rockCrateOwned = false;
+        bool rockCrateOwned = true;
         bool metalCrateOwned = false;
         bool hipHopCrateOwned = false;
         bool jazzCrateOwned = false;
