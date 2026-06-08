@@ -17,6 +17,11 @@ namespace FINAL_PROJECT
         private SpriteBatch _spriteBatch;
         gramps gramps;
 
+        Texture2D recordTexture, turntableTexture;
+        Rectangle recordRect, turntableRect;
+        bool isDraggingRecord;
+        MouseState currentMouseState;
+        MouseState prevMouseState;
 
 
         Rectangle storeRect;
@@ -53,6 +58,8 @@ namespace FINAL_PROJECT
             wallBarrier = new Rectangle(0, 0, 1000, 130);
             recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
+            recordRect = new Rectangle(10, 10, 50, 50);
+            isDraggingRecord = false;
             base.Initialize();
         }
 
@@ -117,6 +124,8 @@ namespace FINAL_PROJECT
             wallTexture = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
+
+            recordTexture = Content.Load<Texture2D>("");
         }
 
         protected override void Update(GameTime gameTime)
