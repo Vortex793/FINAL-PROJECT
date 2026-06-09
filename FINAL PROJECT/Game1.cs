@@ -10,7 +10,11 @@ using System.Transactions;
 
 namespace FINAL_PROJECT
 {
-
+    enum Screen
+    {
+        store,
+        turntable,
+    }
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -18,15 +22,17 @@ namespace FINAL_PROJECT
         gramps gramps;
 
         Texture2D recordTexture, turntableTexture;
-        Rectangle recordRect, turntableRect;
+        Rectangle recordRect = new Rectangle(0, 0, 800, 600);
+        Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         bool isDraggingRecord;
         MouseState currentMouseState;
         MouseState prevMouseState;
-
+        Screen screen;
 
         Rectangle storeRect;
         Texture2D storeTexture, itemTextures;
         Rectangle window;
+   
 
         List<Texture2D> grampsDownFrames = new List<Texture2D>();
         List<Texture2D> grampsUpFrames = new List<Texture2D>();
@@ -37,9 +43,12 @@ namespace FINAL_PROJECT
         customer customerNPC;
         Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
         Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2;
-        Texture2D rockCrateTexture;
-        Vector2 rockCratePosition = new Vector2(800, 600);
-    
+        Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture;  
+        Rectangle rockRect = new Rectangle(0, 0, 800, 600);
+        Rectangle metalRect = new Rectangle(0, 0, 800, 600);
+        Rectangle hiphopRect = new Rectangle(0, 0, 800, 600);
+        Rectangle jazzRect = new Rectangle(0, 0, 800, 600);
+        Rectangle canadianRect = new Rectangle(0, 0, 800, 600);
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -60,6 +69,7 @@ namespace FINAL_PROJECT
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
             recordRect = new Rectangle(10, 10, 50, 50);
             isDraggingRecord = false;
+            screen = Screen.store;
             base.Initialize();
         }
 
@@ -91,7 +101,13 @@ namespace FINAL_PROJECT
 
             customer customer1 = new customer();
 
-            rockCrateTexture = Content.Load<Texture2D>("Record Crate Rock");
+            turntableTexture = Content.Load<Texture2D>("turntable");
+            rockCrateTexture = Content.Load<Texture2D>("Rock Record Crate");
+            metalCrateTexture = Content.Load<Texture2D>("Record Crate Metal");
+            hiphopCrateTexture = Content.Load<Texture2D>("Record Crate Hip Hop");
+            jazzCrateTexture = Content.Load<Texture2D>("Record Crate Jazz");
+            canadianCrateTexture = Content.Load<Texture2D>("Record Crate Canadian");
+
             customer1.downFrames = new List<Texture2D>()
                 {
                     Content.Load<Texture2D>("customer1IdleDown"),
@@ -125,7 +141,7 @@ namespace FINAL_PROJECT
             recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
 
-            recordTexture = Content.Load<Texture2D>("");
+            recordTexture = Content.Load<Texture2D>("recordTexture");
         }
 
         protected override void Update(GameTime gameTime)
@@ -134,7 +150,27 @@ namespace FINAL_PROJECT
                 Exit();
 
             gramps.Update(gameTime);
-
+            if (screen == Screen.turntable)
+            {
+                currentMouseState = Mouse.GetState();
+                if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
+                {
+                    if (recordRect.Contains(currentMouseState.Position))
+                    {
+                        isDraggingRecord = true;
+                    }
+                }
+                else if (currentMouseState.LeftButton == ButtonState.Released)
+                {
+                    isDraggingRecord = false;
+                }
+                if (isDraggingRecord)
+                {
+                    recordRect.X = currentMouseState.X - recordRect.Width / 2;
+                    recordRect.Y = currentMouseState.Y - recordRect.Height / 2;
+                }
+                prevMouseState = currentMouseState;
+            }
             base.Update(gameTime);
             // TODO: Add your update logic here
             if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
@@ -155,18 +191,39 @@ namespace FINAL_PROJECT
 
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
-            _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
-            _spriteBatch.Draw(storeTexture, storeRect, Color.White);
             _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
             _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
-            _spriteBatch.Draw(itemTextures, storeRect, Color.White);
-            gramps.Draw(_spriteBatch);
-            customerNPC.Draw(_spriteBatch);
+            _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
+            _spriteBatch.Draw(storeTexture, storeRect, Color.White);
+
+            //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
+            if (gramps.turntableOwned)
+            {
+                _spriteBatch.Draw(turntableTexture, turntableRect, Color.White);
+            }
             if (gramps.RockCrateOwned)
             {
-                _spriteBatch.Draw(rockCrateTexture, rockCratePosition, Color.White);
+                _spriteBatch.Draw(rockCrateTexture, rockRect, Color.White);
             }
+            if (gramps.MetalCrateOwned)
+            {
+                _spriteBatch.Draw(metalCrateTexture, metalRect, Color.White);
+            }
+            if (gramps.HipHopCrateOwned)
+            {
+                _spriteBatch.Draw(hiphopCrateTexture, hiphopRect, Color.White);
+            }
+            if (gramps.JazzCrateOwned)
+            {
+                _spriteBatch.Draw(jazzCrateTexture, jazzRect, Color.White);
+            }
+            if (gramps.CanadianCrateOwned)
+            {
+                _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
+            }
+            gramps.Draw(_spriteBatch);
+            customerNPC.Draw(_spriteBatch);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);

@@ -20,16 +20,19 @@ namespace FINAL_PROJECT
         Vector2 velocity;
         float frameTimer;
         int frame;
-        bool rockCrateOwned = true;
-        bool metalCrateOwned = false;
-        bool hipHopCrateOwned = false;
-        bool jazzCrateOwned = false;
-
+        public bool turntableOwned = true;
+        public bool RockCrateOwned = true;
+        public bool MetalCrateOwned = true;
+        public bool HipHopCrateOwned = true;
+        public bool JazzCrateOwned = false;
+        public bool CanadianCrateOwned = true;
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
         public List<Texture2D> rightFrames;
         public List<Texture2D> leftFrames;
         public List<Texture2D> currentFrames;
+
+        public int money = 500;
         public gramps(List<Texture2D> down, List<Texture2D> up, List<Texture2D> right, List<Texture2D> left)
         {
             velocity = Vector2.Zero;
@@ -40,7 +43,7 @@ namespace FINAL_PROJECT
             leftFrames = left;
             currentFrames = downFrames;
             position = new Rectangle(300, 200, 35, 50);
-            int money = 500;
+          
         }
         public void Update(GameTime gameTime)
         {
@@ -106,11 +109,11 @@ namespace FINAL_PROJECT
         {
             get { return position; }
         }
-        public bool RockCrateOwned
-        {
-            get { return rockCrateOwned; }
-            set { rockCrateOwned = value; }
-        }
+        //public bool RockCrateOwned
+        //{
+        //    get { return RockCrateOwned; }
+        //    set { RockCrateOwned = value; }
+        //}
         public void MoveBack(Vector2 amount)
         {
             position.X -= (int)amount.X;
