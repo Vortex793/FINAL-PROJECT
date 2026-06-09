@@ -21,7 +21,7 @@ namespace FINAL_PROJECT
         private SpriteBatch _spriteBatch;
         gramps gramps;
 
-        Texture2D recordTexture, turntableTexture;
+        Texture2D recordTexture, turntableTexture, turntableButton;
         Rectangle recordRect = new Rectangle(0, 0, 800, 600);
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         bool isDraggingRecord;
@@ -29,10 +29,11 @@ namespace FINAL_PROJECT
         MouseState prevMouseState;
         Screen screen;
 
+        bool turntableSelectButton = false;
         Rectangle storeRect;
         Texture2D storeTexture, itemTextures;
         Rectangle window;
-   
+        
 
         List<Texture2D> grampsDownFrames = new List<Texture2D>();
         List<Texture2D> grampsUpFrames = new List<Texture2D>();
@@ -42,7 +43,7 @@ namespace FINAL_PROJECT
         List<customer> customerSprites = new List<customer>();
         customer customerNPC;
         Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
-        Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2;
+        Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2, turntableBarrier;
         Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture;  
         Rectangle rockRect = new Rectangle(0, 0, 800, 600);
         Rectangle metalRect = new Rectangle(0, 0, 800, 600);
@@ -68,6 +69,7 @@ namespace FINAL_PROJECT
             recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
             recordRect = new Rectangle(10, 10, 50, 50);
+            turntableBarrier = new Rectangle(34, 130, 106, 30);
             isDraggingRecord = false;
             screen = Screen.store;
             base.Initialize();
@@ -142,6 +144,8 @@ namespace FINAL_PROJECT
             recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
 
             recordTexture = Content.Load<Texture2D>("recordTexture");
+
+            turntableButton = Content.Load<Texture2D>("turntableButton");
         }
 
         protected override void Update(GameTime gameTime)
@@ -177,7 +181,12 @@ namespace FINAL_PROJECT
             {
                 gramps.MoveBack(gramps.Velocity);
             }
+            if (gramps.Hitbox.Intersects(turntableBarrier))
+            {
+                gramps.MoveBack(gramps.Velocity);
+                turntableSelectButton = true;
 
+            }
             customerNPC.Update(gameTime);
 
 
@@ -194,6 +203,7 @@ namespace FINAL_PROJECT
             _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
             _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
             _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
+            _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
             _spriteBatch.Draw(storeTexture, storeRect, Color.White);
 
             //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
@@ -220,6 +230,10 @@ namespace FINAL_PROJECT
             if (gramps.CanadianCrateOwned)
             {
                 _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
+            }
+            if (turntableSelectButton)
+            {
+                _spriteBatch.Draw(turntableButton,)
             }
             gramps.Draw(_spriteBatch);
             customerNPC.Draw(_spriteBatch);
