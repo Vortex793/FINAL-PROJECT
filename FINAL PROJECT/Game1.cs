@@ -22,8 +22,11 @@ namespace FINAL_PROJECT
         gramps gramps;
 
         Texture2D recordTexture, turntableTexture, turntableButton;
+        Texture2D turntableScreen;
+        Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110);
         Rectangle recordRect = new Rectangle(0, 0, 800, 600);
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
+        Rectangle turntableButtonTrigger;
         bool isDraggingRecord;
         MouseState currentMouseState;
         MouseState prevMouseState;
@@ -33,7 +36,8 @@ namespace FINAL_PROJECT
         Rectangle storeRect;
         Texture2D storeTexture, itemTextures;
         Rectangle window;
-        
+
+        KeyboardState keyboard;
 
         List<Texture2D> grampsDownFrames = new List<Texture2D>();
         List<Texture2D> grampsUpFrames = new List<Texture2D>();
@@ -70,6 +74,7 @@ namespace FINAL_PROJECT
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
             recordRect = new Rectangle(10, 10, 50, 50);
             turntableBarrier = new Rectangle(34, 130, 106, 30);
+            turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
             screen = Screen.store;
             base.Initialize();
@@ -146,6 +151,8 @@ namespace FINAL_PROJECT
             recordTexture = Content.Load<Texture2D>("recordTexture");
 
             turntableButton = Content.Load<Texture2D>("turntableButton");
+
+            turntableScreen = Content.Load<Texture2D>("turntableScreen");
         }
 
         protected override void Update(GameTime gameTime)
@@ -153,10 +160,43 @@ namespace FINAL_PROJECT
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            gramps.Update(gameTime);
-            if (screen == Screen.turntable)
+
+            keyboard = Keyboard.GetState();
+            currentMouseState = Mouse.GetState();
+
+            if (screen == Screen.store)
             {
-                currentMouseState = Mouse.GetState();
+                gramps.Update(gameTime, keyboard);
+
+                // TODO: Add your update logic here
+                if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
+                {
+                    gramps.MoveBack(gramps.Velocity);
+                }
+                if (gramps.Hitbox.Intersects(turntableBarrier))
+                {
+                    gramps.MoveBack(gramps.Velocity);
+
+
+                }
+                if (gramps.Hitbox.Intersects(turntableButtonTrigger))
+                {
+                    turntableSelectButton = true;
+
+                    if (keyboard.IsKeyDown(Keys.Enter))
+                    {
+                        screen = Screen.turntable;
+                    }
+                }
+                else
+                {
+                    turntableSelectButton = false;
+                }
+
+                customerNPC.Update(gameTime);
+            }
+            else if (screen == Screen.turntable)
+            {
                 if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
                 {
                     if (recordRect.Contains(currentMouseState.Position))
@@ -174,22 +214,16 @@ namespace FINAL_PROJECT
                     recordRect.Y = currentMouseState.Y - recordRect.Height / 2;
                 }
                 prevMouseState = currentMouseState;
+
+                if (screen == Screen.turntable)
+                {
+
+                }
             }
+            
+            
+
             base.Update(gameTime);
-            // TODO: Add your update logic here
-            if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
-            {
-                gramps.MoveBack(gramps.Velocity);
-            }
-            if (gramps.Hitbox.Intersects(turntableBarrier))
-            {
-                gramps.MoveBack(gramps.Velocity);
-                turntableSelectButton = true;
-
-            }
-            customerNPC.Update(gameTime);
-
-
         }
 
         protected override void Draw(GameTime gameTime)
@@ -200,43 +234,57 @@ namespace FINAL_PROJECT
 
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
-            _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
-            _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
-            _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
-            _spriteBatch.Draw(storeTexture, storeRect, Color.White);
+            if (screen == Screen.store)
+            {
+                _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
+                _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
+                _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
 
-            //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
-            if (gramps.turntableOwned)
+                _spriteBatch.Draw(storeTexture, storeRect, Color.White);
+
+                //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
+                if (gramps.turntableOwned)
+                {
+                    _spriteBatch.Draw(turntableTexture, turntableRect, Color.White);
+                }
+                if (gramps.RockCrateOwned)
+                {
+                    _spriteBatch.Draw(rockCrateTexture, rockRect, Color.White);
+                }
+                if (gramps.MetalCrateOwned)
+                {
+                    _spriteBatch.Draw(metalCrateTexture, metalRect, Color.White);
+                }
+                if (gramps.HipHopCrateOwned)
+                {
+                    _spriteBatch.Draw(hiphopCrateTexture, hiphopRect, Color.White);
+                }
+                if (gramps.JazzCrateOwned)
+                {
+                    _spriteBatch.Draw(jazzCrateTexture, jazzRect, Color.White);
+                }
+                if (gramps.CanadianCrateOwned)
+                {
+                    _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
+                }
+                if (turntableSelectButton)
+                {
+                    _spriteBatch.Draw(turntableButton, turntableButtonRect, Color.White);
+                }
+                
+                
+                _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
+                _spriteBatch.Draw(wallTexture, turntableButtonTrigger, Color.White);
+                gramps.Draw(_spriteBatch);
+                customerNPC.Draw(_spriteBatch);
+            }
+            else if (screen == Screen.turntable)
             {
                 _spriteBatch.Draw(turntableTexture, turntableRect, Color.White);
+
             }
-            if (gramps.RockCrateOwned)
-            {
-                _spriteBatch.Draw(rockCrateTexture, rockRect, Color.White);
-            }
-            if (gramps.MetalCrateOwned)
-            {
-                _spriteBatch.Draw(metalCrateTexture, metalRect, Color.White);
-            }
-            if (gramps.HipHopCrateOwned)
-            {
-                _spriteBatch.Draw(hiphopCrateTexture, hiphopRect, Color.White);
-            }
-            if (gramps.JazzCrateOwned)
-            {
-                _spriteBatch.Draw(jazzCrateTexture, jazzRect, Color.White);
-            }
-            if (gramps.CanadianCrateOwned)
-            {
-                _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
-            }
-            if (turntableSelectButton)
-            {
-                _spriteBatch.Draw(turntableButton,)
-            }
-            gramps.Draw(_spriteBatch);
-            customerNPC.Draw(_spriteBatch);
+
+
 
             _spriteBatch.End();
 

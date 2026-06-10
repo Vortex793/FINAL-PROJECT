@@ -45,10 +45,10 @@ namespace FINAL_PROJECT
             position = new Rectangle(300, 200, 35, 50);
           
         }
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, KeyboardState keyboard)
         {
             playerWalking = false;
-            KeyboardState keyboard = Keyboard.GetState();
+            
             velocity = Vector2.Zero;
             if (keyboard.IsKeyDown(Keys.W))
             {
