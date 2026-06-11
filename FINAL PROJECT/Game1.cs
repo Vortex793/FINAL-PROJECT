@@ -23,6 +23,8 @@ namespace FINAL_PROJECT
 
         Texture2D recordTexture, turntableScreen;
         Rectangle recordRect = new Rectangle(0, 0, 800, 600);
+        Rectangle recordDestination = new Rectangle(150, 140, 150, 100);
+        Rectangle recordInPlace = new Rectangle(-312, -240, 800, 600);
         bool isDraggingRecord;
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         Texture2D turntableExitTexture;
@@ -168,6 +170,7 @@ namespace FINAL_PROJECT
 
             keyboard = Keyboard.GetState();
             currentMouseState = Mouse.GetState();
+            this.Window.Title = currentMouseState.Position.ToString();
 
             if (screen == Screen.store)
             {
@@ -218,11 +221,14 @@ namespace FINAL_PROJECT
                 {
                     screen = Screen.store;
                 }
+
                 if (isDraggingRecord)
                 {
                     recordRect.X = currentMouseState.X - recordRect.Width / 2;
                     recordRect.Y = currentMouseState.Y - recordRect.Height / 2;
                 }
+                if (NewClick() && recordRect.Contains(currentMouseState.Position))
+                    isDraggingRecord = true;
                 prevMouseState = currentMouseState;
 
 
@@ -288,8 +294,11 @@ namespace FINAL_PROJECT
             }
             else if (screen == Screen.turntable)
             {
+                _spriteBatch.Draw(wallTexture, recordDestination, Color.White);
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
+
+                _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
             }
 
 
@@ -297,6 +306,11 @@ namespace FINAL_PROJECT
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+        protected bool NewClick()
+        {
+            return currentMouseState.LeftButton == ButtonState.Pressed &&
+            prevMouseState.LeftButton == ButtonState.Released;
         }
     }
 }
