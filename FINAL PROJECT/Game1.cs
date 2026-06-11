@@ -21,18 +21,23 @@ namespace FINAL_PROJECT
         private SpriteBatch _spriteBatch;
         gramps gramps;
 
-        Texture2D recordTexture, turntableTexture, turntableButton;
-        Texture2D turntableScreen;
-        Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110);
+        Texture2D recordTexture, turntableScreen;
         Rectangle recordRect = new Rectangle(0, 0, 800, 600);
-        Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
-        Rectangle turntableButtonTrigger;
         bool isDraggingRecord;
+        Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
+        Texture2D turntableExitTexture;
+        Rectangle turntableExit = new Rectangle(0, 430, 200, 150);
+
+        Texture2D turntableTexture, turntableButton;
+        Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110), turntableButtonTrigger;
+        bool turntableSelectButton = false;
+
+
         MouseState currentMouseState;
         MouseState prevMouseState;
         Screen screen;
 
-        bool turntableSelectButton = false;
+       
         Rectangle storeRect;
         Texture2D storeTexture, itemTextures;
         Rectangle window;
@@ -143,7 +148,7 @@ namespace FINAL_PROJECT
             customerNPC = customer1;
             gramps = new gramps(grampsDownFrames, grampsUpFrames, grampsRightFrames, grampsLeftFrames);
             storeTexture = Content.Load<Texture2D>("walls");
-            itemTextures = Content.Load<Texture2D>("items");
+            //itemTextures = Content.Load<Texture2D>("items");
             wallTexture = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
@@ -151,7 +156,7 @@ namespace FINAL_PROJECT
             recordTexture = Content.Load<Texture2D>("recordTexture");
 
             turntableButton = Content.Load<Texture2D>("turntableButton");
-
+            turntableExitTexture = Content.Load<Texture2D>("close");
             turntableScreen = Content.Load<Texture2D>("turntableScreen");
         }
 
@@ -208,6 +213,11 @@ namespace FINAL_PROJECT
                 {
                     isDraggingRecord = false;
                 }
+                //exit button
+                if (currentMouseState.LeftButton == ButtonState.Pressed && turntableExit.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.store;
+                }
                 if (isDraggingRecord)
                 {
                     recordRect.X = currentMouseState.X - recordRect.Width / 2;
@@ -215,10 +225,7 @@ namespace FINAL_PROJECT
                 }
                 prevMouseState = currentMouseState;
 
-                if (screen == Screen.turntable)
-                {
 
-                }
             }
             
             
@@ -239,6 +246,8 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
                 _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
                 _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
+                _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
+                _spriteBatch.Draw(wallTexture, turntableButtonTrigger, Color.White);
 
                 _spriteBatch.Draw(storeTexture, storeRect, Color.White);
 
@@ -273,15 +282,14 @@ namespace FINAL_PROJECT
                 }
                 
                 
-                _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
-                _spriteBatch.Draw(wallTexture, turntableButtonTrigger, Color.White);
+               
                 gramps.Draw(_spriteBatch);
                 customerNPC.Draw(_spriteBatch);
             }
             else if (screen == Screen.turntable)
             {
-                _spriteBatch.Draw(turntableTexture, turntableRect, Color.White);
-
+                _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
+                _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
             }
 
 

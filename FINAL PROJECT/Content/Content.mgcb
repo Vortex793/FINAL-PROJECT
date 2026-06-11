@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Copy of Copy of Record Store design(2).png
+#begin close.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Copy of Copy of Record Store design(2).png;turntableScreen.png
+/build:close.png
 
 #begin customer1IdleDown.png
 /importer:TextureImporter
@@ -432,6 +432,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:turntableButton.png
+
+#begin turntableScreen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:turntableScreen.png
 
 #begin walls.png
 /importer:TextureImporter
