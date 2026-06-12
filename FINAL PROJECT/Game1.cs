@@ -14,6 +14,7 @@ namespace FINAL_PROJECT
     {
         store,
         turntable,
+        stock,
     }
     public class Game1 : Game
     {
@@ -22,17 +23,17 @@ namespace FINAL_PROJECT
         gramps gramps;
 
         Texture2D recordTexture, turntableScreen;
-        Rectangle recordRect = new Rectangle(0, 0, 800, 600);
+        Rectangle recordRect;
         Rectangle recordDestination = new Rectangle(150, 140, 150, 100);
         Rectangle recordInPlace = new Rectangle(-312, -240, 800, 600);
-        bool isDraggingRecord;
+        bool isDraggingRecord = false;
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         Texture2D turntableExitTexture;
         Rectangle turntableExit = new Rectangle(0, 430, 200, 150);
 
         Texture2D turntableTexture, turntableButton;
         Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110), turntableButtonTrigger;
-        bool turntableSelectButton = false;
+        bool turntableSelectButton;
 
 
         MouseState currentMouseState;
@@ -79,7 +80,10 @@ namespace FINAL_PROJECT
             wallBarrier = new Rectangle(0, 0, 1000, 130);
             recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
-            recordRect = new Rectangle(10, 10, 50, 50);
+            
+            recordRect = new Rectangle(-312, -300, 800, 600);
+            isDraggingRecord = false;
+
             turntableBarrier = new Rectangle(34, 130, 106, 30);
             turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
@@ -229,12 +233,19 @@ namespace FINAL_PROJECT
                 }
                 if (NewClick() && recordRect.Contains(currentMouseState.Position))
                     isDraggingRecord = true;
+                else if (isDraggingRecord && currentMouseState.LeftButton == ButtonState.Released)
+                    isDraggingRecord = false;
+  
+                else if (isDraggingRecord)
+                    recordRect.Offset(currentMouseState.X - prevMouseState.X,
+                    currentMouseState.Y - prevMouseState.Y);
                 prevMouseState = currentMouseState;
 
-
             }
-            
-            
+            else if (screen == Screen.stock)
+            {
+                // TODO: Add your update logic for the stock screen here
+            }
 
             base.Update(gameTime);
         }
@@ -297,8 +308,8 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(wallTexture, recordDestination, Color.White);
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
-
                 _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
+                _spriteBatch.Draw(recordTexture, recordRect, Color.White);
             }
 
 
