@@ -1,13 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Transactions;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml;
 
 namespace FINAL_PROJECT
 {
@@ -39,7 +33,7 @@ namespace FINAL_PROJECT
         float frameTimer;
         Vector2 destination;
         Vector2 velocity;
-        
+
         public customer()
         {
             position = new Rectangle(300, 400, 35, 50);

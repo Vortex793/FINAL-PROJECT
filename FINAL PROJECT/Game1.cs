@@ -14,6 +14,7 @@ namespace FINAL_PROJECT
     {
         store,
         turntable,
+        ownedRecords,
         stock,
     }
     public class Game1 : Game
@@ -30,11 +31,11 @@ namespace FINAL_PROJECT
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         Texture2D turntableExitTexture;
         Rectangle turntableExit = new Rectangle(0, 430, 200, 150);
-
+        Rectangle centeredRecordRect = new Rectangle(500, 200, 175, 125);
+        Texture2D centeredRecordTexture;
         Texture2D turntableTexture, turntableButton;
         Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110), turntableButtonTrigger;
         bool turntableSelectButton;
-
 
         MouseState currentMouseState;
         MouseState prevMouseState;
@@ -160,6 +161,7 @@ namespace FINAL_PROJECT
             recordCrateBarrierTXR2 = Content.Load<Texture2D>("wallTexture");
 
             recordTexture = Content.Load<Texture2D>("recordTexture");
+            centeredRecordTexture = Content.Load<Texture2D>("centered record");
 
             turntableButton = Content.Load<Texture2D>("turntableButton");
             turntableExitTexture = Content.Load<Texture2D>("close");
@@ -231,13 +233,13 @@ namespace FINAL_PROJECT
                     recordRect.X = currentMouseState.X - recordRect.Width / 2;
                     recordRect.Y = currentMouseState.Y - recordRect.Height / 2;
                 }
-                if (NewClick() && recordRect.Contains(currentMouseState.Position))
+                if (NewClick() && centeredRecordRect.Contains(currentMouseState.Position))
                     isDraggingRecord = true;
                 else if (isDraggingRecord && currentMouseState.LeftButton == ButtonState.Released)
                     isDraggingRecord = false;
   
                 else if (isDraggingRecord)
-                    recordRect.Offset(currentMouseState.X - prevMouseState.X,
+                    centeredRecordRect.Offset(currentMouseState.X - prevMouseState.X,
                     currentMouseState.Y - prevMouseState.Y);
                 prevMouseState = currentMouseState;
 
@@ -309,7 +311,7 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
                 _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
-                _spriteBatch.Draw(recordTexture, recordRect, Color.White);
+                _spriteBatch.Draw(centeredRecordTexture, centeredRecordRect, Color.White);
             }
 
 
