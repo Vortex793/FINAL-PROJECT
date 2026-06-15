@@ -45,6 +45,10 @@ namespace FINAL_PROJECT
         MouseState prevMouseState;
         Screen screen;
 
+        Texture2D upIdle;
+        Texture2D downIdle;
+        Texture2D rightIdle;
+        Texture2D leftIdle;
        
         Rectangle storeRect;
         Texture2D storeTexture, itemTextures;
@@ -61,6 +65,7 @@ namespace FINAL_PROJECT
         customer customerNPC;
         Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
         Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2, turntableBarrier;
+        Rectangle recordBinScreenTrigger;
         Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture;  
         Rectangle rockRect = new Rectangle(0, 0, 800, 600);
         Rectangle metalRect = new Rectangle(0, 0, 800, 600);
@@ -89,10 +94,11 @@ namespace FINAL_PROJECT
             recordRect = new Rectangle(-312, -300, 800, 600);
             isDraggingRecord = false;
 
+            recordBinScreenTrigger = new Rectangle(455, 140, 170, 200);
             turntableBarrier = new Rectangle(34, 130, 106, 30);
             turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
-            screen = Screen.store;
+            screen = Screen.turntable;
             base.Initialize();
         }
 
@@ -155,6 +161,10 @@ namespace FINAL_PROJECT
                     Content.Load<Texture2D>("customer1Walk1Left"),
                     Content.Load<Texture2D>("customer1Walk2Left")
                 };
+            upIdle = Content.Load<Texture2D>("customer1IdleUp");
+            downIdle = Content.Load<Texture2D>("customer1IdleDown");
+            rightIdle = Content.Load<Texture2D>("customer1IdleRight");
+            leftIdle = Content.Load<Texture2D>("customer1IdleLeft");
             customerSprites.Add(customer1);
             customerNPC = customer1;
             gramps = new gramps(grampsDownFrames, grampsUpFrames, grampsRightFrames, grampsLeftFrames);
@@ -330,11 +340,12 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
                 //_spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
-
+                _spriteBatch.Draw(wallTexture, recordBinScreenTrigger, Color.White);
                 if (recordShown && !recordPlaced)
                 {
                     _spriteBatch.Draw(centeredRecordTexture, centeredRecordRect, Color.White);
                 }
+
                 if (recordPlaced)
                 {
                     _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);

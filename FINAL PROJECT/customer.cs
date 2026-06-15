@@ -38,6 +38,7 @@ namespace FINAL_PROJECT
         public List<Texture2D> rightFrames;
         public List<Texture2D> leftFrames;
         public List<Texture2D> currentFrames;
+        public Texture2D upIdle;
 
         public Rectangle position;
 
@@ -55,7 +56,7 @@ namespace FINAL_PROJECT
 
         public customer()
         {
-            position = new Rectangle(300, 400, 35, 50);
+            position = new Rectangle(300, 600, 35, 50);
 
             state = customerState.Entering;
             currentFrames = downFrames;
@@ -73,19 +74,22 @@ namespace FINAL_PROJECT
 
             if (newState == customerState.Entering)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1f });
             }
             else if (newState == customerState.FindingBin)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 3f });
+                path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
+                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 0.5f });
             }
             else if (newState == customerState.Browsing)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+                path.Add(new MovementStep { Direction = MoveDirection.Idle, Time = 3f });
             }
             else if (newState == customerState.ToCheckout)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Idle, Time = 3f });
             }
             else if (newState == customerState.Leaving)
             {
@@ -158,6 +162,8 @@ namespace FINAL_PROJECT
                 case MoveDirection.Right:
                     currentFrames = rightFrames;
                     break;
+                //case MoveDirection.Idle:
+                //    currentFrames = upIdle;
             }
         }
 
