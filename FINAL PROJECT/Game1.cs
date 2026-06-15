@@ -29,14 +29,18 @@ namespace FINAL_PROJECT
         Rectangle recordInPlace = new Rectangle(-312, -240, 800, 600);
         bool isDraggingRecord = false;
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
-        Texture2D turntableExitTexture;
+        Texture2D turntableExitTexture, turntablePlayTexture;
         Rectangle turntableExit = new Rectangle(0, 430, 200, 150);
+        Rectangle turntablePlay = new Rectangle(300, 200, 100, 50);
         Rectangle centeredRecordRect = new Rectangle(500, 200, 175, 125);
         Texture2D centeredRecordTexture;
         Texture2D turntableTexture, turntableButton;
         Rectangle turntableButtonRect = new Rectangle(30, 0, 160, 110), turntableButtonTrigger;
         bool turntableSelectButton;
-
+        bool recordPlaced = false;
+        //Rectangle turntableCenter = new Rectangle(312, 240, 175, 125);
+        bool recordShown = true;
+        Song canadianRockAlbum;
         MouseState currentMouseState;
         MouseState prevMouseState;
         Screen screen;
@@ -165,9 +169,10 @@ namespace FINAL_PROJECT
 
             turntableButton = Content.Load<Texture2D>("turntableButton");
             turntableExitTexture = Content.Load<Texture2D>("close");
+            turntablePlayTexture = Content.Load<Texture2D>("playButton");
             turntableScreen = Content.Load<Texture2D>("turntableScreen");
+            canadianRockAlbum = Content.Load<Song>("canadianRockAlbum");
         }
-
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -211,23 +216,27 @@ namespace FINAL_PROJECT
             }
             else if (screen == Screen.turntable)
             {
-                if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
-                {
-                    if (recordRect.Contains(currentMouseState.Position))
-                    {
-                        isDraggingRecord = true;
-                    }
-                }
-                else if (currentMouseState.LeftButton == ButtonState.Released)
-                {
-                    isDraggingRecord = false;
-                }
+                //if (currentMouseState.LeftButton == ButtonState.Pressed && prevMouseState.LeftButton == ButtonState.Released)
+                //{
+                //    if (recordRect.Contains(currentMouseState.Position))
+                //    {
+                //        isDraggingRecord = true;
+                //    }
+                //}
+                //else if (currentMouseState.LeftButton == ButtonState.Released)
+                //{
+                //    isDraggingRecord = false;
+                //}
                 //exit button
                 if (currentMouseState.LeftButton == ButtonState.Pressed && turntableExit.Contains(currentMouseState.Position))
                 {
                     screen = Screen.store;
                 }
-
+                //play button
+                if (currentMouseState.LeftButton == ButtonState.Pressed && turntablePlay.Contains(currentMouseState.Position))
+                {
+                    MediaPlayer.Play(canadianRockAlbum);
+                }
                 if (isDraggingRecord)
                 {
                     recordRect.X = currentMouseState.X - recordRect.Width / 2;
@@ -241,8 +250,18 @@ namespace FINAL_PROJECT
                 else if (isDraggingRecord)
                     centeredRecordRect.Offset(currentMouseState.X - prevMouseState.X,
                     currentMouseState.Y - prevMouseState.Y);
-                prevMouseState = currentMouseState;
+                if (centeredRecordRect.Intersects(recordDestination))
+                {
+                    recordShown = false;
+                    recordPlaced = true;
+                }
 
+                else
+                {
+                    recordPlaced = false;
+                }
+                prevMouseState = currentMouseState;
+                
             }
             else if (screen == Screen.stock)
             {
@@ -310,8 +329,17 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(wallTexture, recordDestination, Color.White);
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
-                _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
-                _spriteBatch.Draw(centeredRecordTexture, centeredRecordRect, Color.White);
+                //_spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
+
+                if (recordShown && !recordPlaced)
+                {
+                    _spriteBatch.Draw(centeredRecordTexture, centeredRecordRect, Color.White);
+                }
+                if (recordPlaced)
+                {
+                    _spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
+                    _spriteBatch.Draw(turntablePlayTexture, turntablePlay, Color.White);
+                }
             }
 
 

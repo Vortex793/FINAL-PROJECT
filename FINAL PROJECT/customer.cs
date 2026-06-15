@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 namespace FINAL_PROJECT
 {
-
-
     class customer
     {
         enum customerState
@@ -17,6 +15,22 @@ namespace FINAL_PROJECT
             ToCheckout,
             Leaving,
         }
+
+        enum MoveDirection
+        {
+            Up,
+            Down,
+            Left,
+            Right,
+            Idle
+        }
+
+        class MovementStep
+        {
+            public MoveDirection Direction;
+            public float Time;
+        }
+
         customerState state;
 
         public List<Texture2D> downFrames;
@@ -27,122 +41,179 @@ namespace FINAL_PROJECT
 
         public Rectangle position;
 
-        float speed;
-        bool walking;
+        float speed = 2f;
+
         int frame;
         float frameTimer;
-        Vector2 destination;
-        Vector2 velocity;
+
+        // NEW movement system
+        List<MovementStep> path = new List<MovementStep>();
+        int currentStep = 0;
+        float stepTimer = 0f;
+
+        MoveDirection currentDirection = MoveDirection.Idle;
 
         public customer()
         {
             position = new Rectangle(300, 400, 35, 50);
-            destination = new Vector2(300, 250);
-            speed = 2f;
+
             state = customerState.Entering;
             currentFrames = downFrames;
+
+            BuildPathForState(state);
         }
 
-        private void MoveTowardsDestination()
-        {
-            Vector2 currentPos = new Vector2(position.X, position.Y);
-            Vector2 direction = destination - currentPos;
-            if (direction.Length() > 2f)
-            {
-                direction.Normalize();
-                velocity = direction * speed;
-                position.X += (int)(velocity.X);
-                position.Y += (int)(velocity.Y);
-                walking = true;
+        // ---------------- PATH SYSTEM ----------------
 
-                UpdateAnimationDirection();
-            }
-            else
+        void BuildPathForState(customerState newState)
+        {
+            path.Clear();
+            currentStep = 0;
+            stepTimer = 0f;
+
+            if (newState == customerState.Entering)
             {
-                velocity = Vector2.Zero;
-                walking = false;
-                position.X = (int)destination.X;
-                position.Y = (int)destination.Y;
+                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
+            }
+            else if (newState == customerState.FindingBin)
+            {
+                path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 3f });
+            }
+            else if (newState == customerState.Browsing)
+            {
+                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+            }
+            else if (newState == customerState.ToCheckout)
+            {
+                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 2f });
+            }
+            else if (newState == customerState.Leaving)
+            {
+                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 2f });
+            }
+        }
+
+        // ---------------- MOVEMENT ----------------
+
+        void MoveStep()
+        {
+            if (path.Count == 0 || currentStep >= path.Count)
+                return;
+
+            MovementStep step = path[currentStep];
+
+            currentDirection = step.Direction;
+
+            switch (step.Direction)
+            {
+                case MoveDirection.Up:
+                    position.Y -= (int)speed;
+                    break;
+
+                case MoveDirection.Down:
+                    position.Y += (int)speed;
+                    break;
+
+                case MoveDirection.Left:
+                    position.X -= (int)speed;
+                    break;
+
+                case MoveDirection.Right:
+                    position.X += (int)speed;
+                    break;
+            }
+
+            stepTimer += 1f / 60f;
+
+            if (stepTimer >= step.Time)
+            {
+                currentStep++;
+                stepTimer = 0f;
+            }
+
+            if (currentStep >= path.Count)
+            {
                 ArrivedAtDestination();
             }
         }
-        private void UpdateAnimationDirection()
-        {
-            if (Math.Abs(velocity.X) > Math.Abs(velocity.Y))
-            {
-                if (velocity.X > 0)     //Right
-                {
-                    currentFrames = rightFrames;
-                }
-                else    //Left
-                {
-                    currentFrames = leftFrames;
-                }
 
-            }
-            else
+        // ---------------- ANIMATION ----------------
+
+        void UpdateAnimation()
+        {
+            switch (currentDirection)
             {
-                if (velocity.Y > 0)     //Down
-                {
-                    currentFrames = downFrames;
-                }
-                else    //Up
-                {
+                case MoveDirection.Up:
                     currentFrames = upFrames;
-                }
+                    break;
+
+                case MoveDirection.Down:
+                    currentFrames = downFrames;
+                    break;
+
+                case MoveDirection.Left:
+                    currentFrames = leftFrames;
+                    break;
+
+                case MoveDirection.Right:
+                    currentFrames = rightFrames;
+                    break;
             }
         }
-        private void ArrivedAtDestination()
+
+        // ---------------- STATE LOGIC ----------------
+
+        void ArrivedAtDestination()
         {
             if (state == customerState.Entering)
             {
                 state = customerState.FindingBin;
-                destination = new Vector2(100, 250);
             }
             else if (state == customerState.FindingBin)
             {
                 state = customerState.Browsing;
-                // Set a timer for browsing duration
             }
             else if (state == customerState.Browsing)
             {
                 state = customerState.ToCheckout;
-                destination = new Vector2(400, 250);
             }
             else if (state == customerState.ToCheckout)
             {
                 state = customerState.Leaving;
-                destination = new Vector2(300, 400);
             }
+
+            BuildPathForState(state);
         }
+
+        // ---------------- UPDATE ----------------
+
         public void Update(GameTime gameTime)
         {
-            MoveTowardsDestination();
-            if (walking)
+            MoveStep();
+            UpdateAnimation();
+
+            if (path.Count > 0)
             {
                 frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (frameTimer >= 0.20f)
+
+                if (frameTimer >= 0.2f)
                 {
                     frame++;
-
-                    if (frame > 2)
-                    {
-                        frame = 1;
-                    }
-
+                    if (frame > 2) frame = 1;
                     frameTimer = 0f;
                 }
-
             }
             else
             {
                 frame = 0;
             }
         }
+
+        // ---------------- DRAW ----------------
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(currentFrames[frame], position, Color.White);
         }
     }
-
 }
