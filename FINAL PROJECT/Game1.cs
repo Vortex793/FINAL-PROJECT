@@ -17,6 +17,12 @@ namespace FINAL_PROJECT
         ownedRecords,
         stock,
     }
+    enum Record 
+    { 
+        canadianRock,
+        Metal,
+
+    }
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
@@ -31,6 +37,7 @@ namespace FINAL_PROJECT
         Rectangle turntableRect = new Rectangle(0, 0, 800, 600);
         Texture2D turntableExitTexture, turntablePlayTexture;
         Rectangle turntableExit = new Rectangle(0, 430, 200, 150);
+        Rectangle ownedRecordsExit = new Rectangle(600, 430, 200, 150);
         Rectangle turntablePlay = new Rectangle(300, 200, 100, 50);
         Rectangle centeredRecordRect = new Rectangle(500, 200, 175, 125);
         Texture2D centeredRecordTexture;
@@ -39,11 +46,14 @@ namespace FINAL_PROJECT
         bool turntableSelectButton;
         bool recordPlaced = false;
         //Rectangle turntableCenter = new Rectangle(312, 240, 175, 125);
-        bool recordShown = true;
+        bool recordShown = false;
+        bool albumSelected = false;
         Song canadianRockAlbum;
+        Texture2D canadianRecordTexture;
         MouseState currentMouseState;
         MouseState prevMouseState;
         Screen screen;
+        Record record;
 
         Texture2D upIdle;
         Texture2D downIdle;
@@ -72,6 +82,7 @@ namespace FINAL_PROJECT
         Rectangle hiphopRect = new Rectangle(0, 0, 800, 600);
         Rectangle jazzRect = new Rectangle(0, 0, 800, 600);
         Rectangle canadianRect = new Rectangle(0, 0, 800, 600);
+        Rectangle canadianAlbumRect = new Rectangle(200, 100, 400, 400);
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -98,7 +109,7 @@ namespace FINAL_PROJECT
             turntableBarrier = new Rectangle(34, 130, 106, 30);
             turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
-            screen = Screen.turntable;
+            screen = Screen.store;
             base.Initialize();
         }
 
@@ -182,6 +193,7 @@ namespace FINAL_PROJECT
             turntablePlayTexture = Content.Load<Texture2D>("playButton");
             turntableScreen = Content.Load<Texture2D>("turntableScreen");
             canadianRockAlbum = Content.Load<Song>("canadianRockAlbum");
+            canadianRecordTexture = Content.Load<Texture2D>("Canadian Rock");
         }
         protected override void Update(GameTime gameTime)
         {
@@ -243,7 +255,7 @@ namespace FINAL_PROJECT
                     screen = Screen.store;
                 }
                 //play button
-                if (currentMouseState.LeftButton == ButtonState.Pressed && turntablePlay.Contains(currentMouseState.Position))
+                if (currentMouseState.LeftButton == ButtonState.Pressed && turntablePlay.Contains(currentMouseState.Position) && record == Record.canadianRock && albumSelected)
                 {
                     MediaPlayer.Play(canadianRockAlbum);
                 }
@@ -270,8 +282,44 @@ namespace FINAL_PROJECT
                 {
                     recordPlaced = false;
                 }
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordBinScreenTrigger.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.ownedRecords;
+                }
+
                 prevMouseState = currentMouseState;
                 
+            }
+            else if (screen == Screen.ownedRecords)
+            {
+                if (currentMouseState.LeftButton == ButtonState.Pressed && canadianAlbumRect.Contains(currentMouseState.Position))
+                {
+                    albumSelected = true;
+                    record = Record.canadianRock;
+                }
+                else
+                {
+                    albumSelected = false;
+                }
+
+                if (currentMouseState.LeftButton == ButtonState.Pressed && ownedRecordsExit.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.turntable;
+                }
+
+                if (NewClick() && canadianAlbumRect.Contains(currentMouseState.Position))
+                {
+                    albumSelected = true;
+                    record = Record.canadianRock;
+                }
+
+                if (currentMouseState.LeftButton == ButtonState.Pressed &&
+                    ownedRecordsExit.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.turntable;
+                }
+
+                recordShown = albumSelected;
             }
             else if (screen == Screen.stock)
             {
@@ -352,10 +400,15 @@ namespace FINAL_PROJECT
                     _spriteBatch.Draw(turntablePlayTexture, turntablePlay, Color.White);
                 }
             }
+            else if (screen == Screen.ownedRecords)
+            {
+                _spriteBatch.Draw(canadianRecordTexture, canadianAlbumRect, Color.White);
+                _spriteBatch.Draw(turntableExitTexture, ownedRecordsExit, Color.White);
+            }
 
 
 
-            _spriteBatch.End();
+                _spriteBatch.End();
 
             base.Draw(gameTime);
         }
