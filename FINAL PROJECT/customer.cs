@@ -97,7 +97,7 @@ namespace FINAL_PROJECT
             }
         }
 
-        // ---------------- MOVEMENT ----------------
+        //Move
 
         void MoveStep()
         {

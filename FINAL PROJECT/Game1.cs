@@ -55,6 +55,8 @@ namespace FINAL_PROJECT
         Screen screen;
         Record record;
 
+        Texture2D whiteXPBar;
+
         Texture2D upIdle;
         Texture2D downIdle;
         Texture2D rightIdle;
@@ -292,15 +294,15 @@ namespace FINAL_PROJECT
             }
             else if (screen == Screen.ownedRecords)
             {
-                if (currentMouseState.LeftButton == ButtonState.Pressed && canadianAlbumRect.Contains(currentMouseState.Position))
-                {
-                    albumSelected = true;
-                    record = Record.canadianRock;
-                }
-                else
-                {
-                    albumSelected = false;
-                }
+                //if (currentMouseState.LeftButton == ButtonState.Pressed && canadianAlbumRect.Contains(currentMouseState.Position))
+                //{
+                //    albumSelected = true;
+                //    record = Record.canadianRock;
+                //}
+                //else
+                //{
+                //    albumSelected = false;
+                //}
 
                 if (currentMouseState.LeftButton == ButtonState.Pressed && ownedRecordsExit.Contains(currentMouseState.Position))
                 {
