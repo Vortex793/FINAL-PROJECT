@@ -68,6 +68,7 @@ namespace FINAL_PROJECT
 
         KeyboardState keyboard;
 
+        SpriteFont hudFont;
         List<Texture2D> grampsDownFrames = new List<Texture2D>();
         List<Texture2D> grampsUpFrames = new List<Texture2D>();
         List<Texture2D> grampsRightFrames = new List<Texture2D>();
@@ -77,14 +78,19 @@ namespace FINAL_PROJECT
         customer customerNPC;
         Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
         Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2, turntableBarrier;
+        Rectangle cashRegisterCollision;
         Rectangle recordBinScreenTrigger;
-        Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture;  
+        Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture, cashRegisterTexture, halfCashRegisterTexture,topCashRegisterTexture, doorsTexture;  
         Rectangle rockRect = new Rectangle(0, 0, 800, 600);
         Rectangle metalRect = new Rectangle(0, 0, 800, 600);
         Rectangle hiphopRect = new Rectangle(0, 0, 800, 600);
         Rectangle jazzRect = new Rectangle(0, 0, 800, 600);
         Rectangle canadianRect = new Rectangle(0, 0, 800, 600);
         Rectangle canadianAlbumRect = new Rectangle(200, 100, 400, 400);
+        Rectangle cashRegisterRect = new Rectangle(0, 0, 800, 600);
+        Rectangle doorsRect = new Rectangle(0, 0, 800, 600);
+        Rectangle customerPayTrigger = new Rectangle(550, 250, 100, 50);
+        
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -103,11 +109,11 @@ namespace FINAL_PROJECT
             wallBarrier = new Rectangle(0, 0, 1000, 130);
             recordCrateBarrier1 = new Rectangle(160, 158, 322, 43);
             recordCrateBarrier2 = new Rectangle(160, 315, 322, 43);
-            
+            cashRegisterCollision = new Rectangle(505, 200, 155, 30);
             recordRect = new Rectangle(-312, -300, 800, 600);
             isDraggingRecord = false;
 
-            recordBinScreenTrigger = new Rectangle(455, 140, 170, 200);
+            recordBinScreenTrigger = new Rectangle(455, 100, 190, 200);
             turntableBarrier = new Rectangle(34, 130, 106, 30);
             turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
@@ -149,6 +155,10 @@ namespace FINAL_PROJECT
             hiphopCrateTexture = Content.Load<Texture2D>("Record Crate Hip Hop");
             jazzCrateTexture = Content.Load<Texture2D>("Record Crate Jazz");
             canadianCrateTexture = Content.Load<Texture2D>("Record Crate Canadian");
+            cashRegisterTexture = Content.Load<Texture2D>("Cash Register");
+            halfCashRegisterTexture = Content.Load<Texture2D>("cash register half");
+            topCashRegisterTexture = Content.Load<Texture2D>("cash register top");
+            doorsTexture = Content.Load<Texture2D>("doors");
 
             customer1.downFrames = new List<Texture2D>()
                 {
@@ -174,7 +184,7 @@ namespace FINAL_PROJECT
                     Content.Load<Texture2D>("customer1Walk1Left"),
                     Content.Load<Texture2D>("customer1Walk2Left")
                 };
-            upIdle = Content.Load<Texture2D>("customer1IdleUp");
+            customer1.upIdle = Content.Load<Texture2D>("customer1IdleUp");
             downIdle = Content.Load<Texture2D>("customer1IdleDown");
             rightIdle = Content.Load<Texture2D>("customer1IdleRight");
             leftIdle = Content.Load<Texture2D>("customer1IdleLeft");
@@ -196,6 +206,8 @@ namespace FINAL_PROJECT
             turntableScreen = Content.Load<Texture2D>("turntableScreen");
             canadianRockAlbum = Content.Load<Song>("canadianRockAlbum");
             canadianRecordTexture = Content.Load<Texture2D>("Canadian Rock");
+
+            hudFont = Content.Load<SpriteFont>("font");
         }
         protected override void Update(GameTime gameTime)
         {
@@ -213,6 +225,10 @@ namespace FINAL_PROJECT
 
                 // TODO: Add your update logic here
                 if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
+                {
+                    gramps.MoveBack(gramps.Velocity);
+                }
+                if (gramps.Hitbox.Intersects(cashRegisterCollision))
                 {
                     gramps.MoveBack(gramps.Velocity);
                 }
@@ -234,6 +250,11 @@ namespace FINAL_PROJECT
                 else
                 {
                     turntableSelectButton = false;
+                }
+                if (customerNPC.Hitbox.Intersects(customerPayTrigger) && !customerNPC.hasPaid)
+                {
+                    gramps.money += 40;
+                    customerNPC.hasPaid = true;
                 }
 
                 customerNPC.Update(gameTime);
@@ -260,6 +281,7 @@ namespace FINAL_PROJECT
                 if (currentMouseState.LeftButton == ButtonState.Pressed && turntablePlay.Contains(currentMouseState.Position) && record == Record.canadianRock && albumSelected)
                 {
                     MediaPlayer.Play(canadianRockAlbum);
+                    MediaPlayer.Volume = 0.25f;
                 }
                 if (isDraggingRecord)
                 {
@@ -289,7 +311,7 @@ namespace FINAL_PROJECT
                     screen = Screen.ownedRecords;
                 }
 
-                prevMouseState = currentMouseState;
+      
                 
             }
             else if (screen == Screen.ownedRecords)
@@ -328,6 +350,7 @@ namespace FINAL_PROJECT
                 // TODO: Add your update logic for the stock screen here
             }
 
+            prevMouseState = currentMouseState;
             base.Update(gameTime);
         }
 
@@ -346,9 +369,14 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(wallTexture, wallBarrier, Color.White);
                 _spriteBatch.Draw(wallTexture, turntableBarrier, Color.White);
                 _spriteBatch.Draw(wallTexture, turntableButtonTrigger, Color.White);
+                _spriteBatch.Draw(wallTexture, cashRegisterCollision, Color.White);
+                _spriteBatch.Draw(wallTexture, customerPayTrigger, Color.White);
 
                 _spriteBatch.Draw(storeTexture, storeRect, Color.White);
-
+                _spriteBatch.Draw(halfCashRegisterTexture, cashRegisterRect, Color.White);
+                _spriteBatch.Draw(topCashRegisterTexture, cashRegisterRect, Color.White);
+                
+                
                 //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
                 if (gramps.turntableOwned)
                 {
@@ -383,14 +411,18 @@ namespace FINAL_PROJECT
                
                 gramps.Draw(_spriteBatch);
                 customerNPC.Draw(_spriteBatch);
+                _spriteBatch.Draw(doorsTexture, doorsRect, Color.White);
+                _spriteBatch.Draw(topCashRegisterTexture, cashRegisterRect, Color.White);
+                _spriteBatch.DrawString(hudFont,"Money: $" + gramps.money,new Vector2(0, 0),Color.Green);
             }
             else if (screen == Screen.turntable)
             {
+                _spriteBatch.Draw(wallTexture, recordBinScreenTrigger, Color.White);
                 _spriteBatch.Draw(wallTexture, recordDestination, Color.White);
                 _spriteBatch.Draw(turntableScreen, turntableRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, turntableExit, Color.White);
                 //_spriteBatch.Draw(recordTexture, recordInPlace, Color.White);
-                _spriteBatch.Draw(wallTexture, recordBinScreenTrigger, Color.White);
+
                 if (recordShown && !recordPlaced)
                 {
                     _spriteBatch.Draw(centeredRecordTexture, centeredRecordRect, Color.White);

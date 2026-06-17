@@ -13,6 +13,7 @@ namespace FINAL_PROJECT
             FindingBin,
             Browsing,
             ToCheckout,
+            Paying,
             Leaving,
         }
 
@@ -33,6 +34,7 @@ namespace FINAL_PROJECT
 
         customerState state;
 
+        MoveDirection facingDirection = MoveDirection.Down;
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
         public List<Texture2D> rightFrames;
@@ -40,6 +42,7 @@ namespace FINAL_PROJECT
         public List<Texture2D> currentFrames;
         public Texture2D upIdle;
 
+        public bool hasPaid = false;
         public Rectangle position;
 
         float speed = 2f;
@@ -56,7 +59,7 @@ namespace FINAL_PROJECT
 
         public customer()
         {
-            position = new Rectangle(300, 600, 35, 50);
+            position = new Rectangle(340, 600, 35, 50);
 
             state = customerState.Entering;
             currentFrames = downFrames;
@@ -74,12 +77,12 @@ namespace FINAL_PROJECT
 
             if (newState == customerState.Entering)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1f });
+                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
             }
             else if (newState == customerState.FindingBin)
             {
                 path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
-                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
                 path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 0.5f });
             }
             else if (newState == customerState.Browsing)
@@ -88,13 +91,19 @@ namespace FINAL_PROJECT
             }
             else if (newState == customerState.ToCheckout)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+            }
+            else if (newState == customerState.Paying)
+            {
                 path.Add(new MovementStep { Direction = MoveDirection.Idle, Time = 3f });
             }
             else if (newState == customerState.Leaving)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 2f });
+                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 1f });
+                path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1f });
+                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 1f });
             }
+
         }
 
         //Move
@@ -139,6 +148,12 @@ namespace FINAL_PROJECT
             {
                 ArrivedAtDestination();
             }
+            currentDirection = step.Direction;
+
+            if (currentDirection != MoveDirection.Idle)
+            {
+                facingDirection = currentDirection;
+            }
         }
 
         // ---------------- ANIMATION ----------------
@@ -162,8 +177,9 @@ namespace FINAL_PROJECT
                 case MoveDirection.Right:
                     currentFrames = rightFrames;
                     break;
-                //case MoveDirection.Idle:
-                //    currentFrames = upIdle;
+                case MoveDirection.Idle:
+                    frame = 0;
+                    break;
             }
         }
 
@@ -198,7 +214,7 @@ namespace FINAL_PROJECT
             MoveStep();
             UpdateAnimation();
 
-            if (path.Count > 0)
+            if (currentDirection != MoveDirection.Idle)
             {
                 frameTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -215,11 +231,21 @@ namespace FINAL_PROJECT
             }
         }
 
-        // ---------------- DRAW ----------------
+        public Rectangle Hitbox
+        {
+            get { return position; }
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(currentFrames[frame], position, Color.White);
+            if (state == customerState.Browsing || state == customerState.Paying)
+            {
+                spriteBatch.Draw(upIdle, position, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(currentFrames[frame], position, Color.White);
+            }
         }
     }
 }
