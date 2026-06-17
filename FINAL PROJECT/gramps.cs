@@ -23,8 +23,8 @@ namespace FINAL_PROJECT
         public bool turntableOwned = true;
         public bool RockCrateOwned = true;
         public bool MetalCrateOwned = true;
-        public bool HipHopCrateOwned = false;
-        public bool JazzCrateOwned = false;
+        public bool HipHopCrateOwned = true;
+        public bool JazzCrateOwned = true;
         public bool CanadianCrateOwned = true;
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
