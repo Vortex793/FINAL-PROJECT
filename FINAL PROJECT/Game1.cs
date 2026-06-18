@@ -58,6 +58,7 @@ namespace FINAL_PROJECT
         Texture2D whiteXPBar;
 
         Texture2D upIdle;
+        Texture2D upIdle2;
         Texture2D downIdle;
         Texture2D rightIdle;
         Texture2D leftIdle;
@@ -148,6 +149,7 @@ namespace FINAL_PROJECT
 
 
             customer customer1 = new customer();
+            customer2 customer2 = new customer2();
 
             turntableTexture = Content.Load<Texture2D>("turntable");
             rockCrateTexture = Content.Load<Texture2D>("Rock Record Crate");
@@ -184,7 +186,34 @@ namespace FINAL_PROJECT
                     Content.Load<Texture2D>("customer1Walk1Left"),
                     Content.Load<Texture2D>("customer1Walk2Left")
                 };
+
+
+            customer2.downFrames = new List<Texture2D>()
+                {
+                    Content.Load<Texture2D>("customer2IdleDown"),
+                    Content.Load<Texture2D>("customer2Walk1Down"),
+                    Content.Load<Texture2D>("customer2Walk2Down")
+            };
+            customer2.upFrames = new List<Texture2D>()
+            {
+                    Content.Load<Texture2D>("customer2IdleUp"),
+                    Content.Load<Texture2D>("customer2Walk1Up"),
+                    Content.Load<Texture2D>("customer2Walk2Up")
+            };
+            customer2.rightFrames = new List<Texture2D>()
+            {
+                    Content.Load<Texture2D>("customer2IdleRight"),
+                    Content.Load<Texture2D>("customer2Walk1Right"),
+                    Content.Load<Texture2D>("customer2Walk2Right")
+            };
+            customer2.leftFrames = new List<Texture2D>()
+            {
+                    Content.Load<Texture2D>("customer2IdleLeft"),
+                    Content.Load<Texture2D>("customer2Walk1Left"),
+                    Content.Load<Texture2D>("customer2Walk2Left")
+            };
             customer1.upIdle = Content.Load<Texture2D>("customer1IdleUp");
+            customer2.upIdle2 = Content.Load<Texture2D>("customer2IdleUp");
             downIdle = Content.Load<Texture2D>("customer1IdleDown");
             rightIdle = Content.Load<Texture2D>("customer1IdleRight");
             leftIdle = Content.Load<Texture2D>("customer1IdleLeft");
