@@ -12,10 +12,20 @@ namespace FINAL_PROJECT
 {
     enum Screen
     {
+        menu,
+        howToPlay,
+
         store,
+        pause,
+        upgrades,
         turntable,
         ownedRecords,
         stock,
+    }
+    enum GameState
+    {
+        settingUp,
+        openingStore,
     }
     enum Record 
     { 
@@ -54,7 +64,9 @@ namespace FINAL_PROJECT
         MouseState prevMouseState;
         Screen screen;
         Record record;
+        GameState gameState;
 
+        float xpTimer = 0f;
         Texture2D whiteXPBar;
 
         Texture2D upIdle;
@@ -62,9 +74,16 @@ namespace FINAL_PROJECT
         Texture2D downIdle;
         Texture2D rightIdle;
         Texture2D leftIdle;
-       
+
+        Texture2D upgradesButton, upgradesScreen;
+        Rectangle upgradesRect = new Rectangle(600, 430, 200, 150);
+        Rectangle upgradesScreenRect = new Rectangle(0, 0, 800, 600);
+        Rectangle turntablePurchaseRect = new Rectangle(0, 380, 200, 150);
+        Rectangle cratePurchaseRect = new Rectangle(280, 385, 180, 100);
+        Rectangle postersPurchaseRect = new Rectangle(600, 380, 200, 150);
+
         Rectangle storeRect;
-        Texture2D storeTexture, itemTextures;
+        Texture2D storeTexture, itemTextures, menuTexture, pauseTexture;
         Rectangle window;
 
         KeyboardState keyboard;
@@ -75,23 +94,34 @@ namespace FINAL_PROJECT
         List<Texture2D> grampsRightFrames = new List<Texture2D>();
         List<Texture2D> grampsLeftFrames = new List<Texture2D>();
 
+        Rectangle menuStart, menuQuit, menuHTP;
+
         List<customer> customerSprites = new List<customer>();
         customer customerNPC;
+        customer2 customerNPC2;
         Texture2D wallTexture, recordCrateBarrierTXR1, recordCrateBarrierTXR2;
         Rectangle wallBarrier, recordCrateBarrier1, recordCrateBarrier2, turntableBarrier;
         Rectangle cashRegisterCollision;
         Rectangle recordBinScreenTrigger;
-        Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture, cashRegisterTexture, halfCashRegisterTexture,topCashRegisterTexture, doorsTexture;  
+        Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture, essentialCrateTexture, cashRegisterTexture, halfCashRegisterTexture,topCashRegisterTexture, doorsTexture;
+        Rectangle menuScreenRect = new Rectangle(0, 0, 800, 600);
         Rectangle rockRect = new Rectangle(0, 0, 800, 600);
         Rectangle metalRect = new Rectangle(0, 0, 800, 600);
         Rectangle hiphopRect = new Rectangle(0, 0, 800, 600);
         Rectangle jazzRect = new Rectangle(0, 0, 800, 600);
         Rectangle canadianRect = new Rectangle(0, 0, 800, 600);
+        Rectangle essentialRect = new Rectangle(0, 0, 800, 600);
         Rectangle canadianAlbumRect = new Rectangle(200, 100, 400, 400);
         Rectangle cashRegisterRect = new Rectangle(0, 0, 800, 600);
         Rectangle doorsRect = new Rectangle(0, 0, 800, 600);
         Rectangle customerPayTrigger = new Rectangle(550, 250, 100, 50);
-        
+        public int rockCrateStock = 3;
+        public int metalCrateStock = 3;
+        public int hiphopCrateStock = 3;
+        public int jazzCrateStock = 3;
+        public int canadianCrateStock = 3;
+        public int essentialCrateStock = 3;
+        float customerSpawnTime;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -114,11 +144,16 @@ namespace FINAL_PROJECT
             recordRect = new Rectangle(-312, -300, 800, 600);
             isDraggingRecord = false;
 
+            menuStart = new Rectangle(280, 385, 180, 100);
+            menuQuit = new Rectangle(0, 380, 200, 150);
+            menuHTP = new Rectangle(600, 380, 200, 150);
+
             recordBinScreenTrigger = new Rectangle(455, 100, 190, 200);
             turntableBarrier = new Rectangle(34, 130, 106, 30);
             turntableButtonTrigger = new Rectangle(34, 160, 106, 30);   //When gramps enters it wil trigger the instruction to press enter
             isDraggingRecord = false;
-            screen = Screen.store;
+            screen = Screen.menu;
+            gameState = GameState.settingUp;
             base.Initialize();
         }
 
@@ -147,9 +182,9 @@ namespace FINAL_PROJECT
             grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk1Left"));
             grampsLeftFrames.Add(Content.Load<Texture2D>("grampsWalk2Left"));
 
-
+            gramps = new gramps(grampsDownFrames, grampsUpFrames, grampsRightFrames, grampsLeftFrames);
             customer customer1 = new customer();
-            customer2 customer2 = new customer2();
+            customer2 customer2 = new customer2(gramps);
 
             turntableTexture = Content.Load<Texture2D>("turntable");
             rockCrateTexture = Content.Load<Texture2D>("Rock Record Crate");
@@ -161,6 +196,9 @@ namespace FINAL_PROJECT
             halfCashRegisterTexture = Content.Load<Texture2D>("cash register half");
             topCashRegisterTexture = Content.Load<Texture2D>("cash register top");
             doorsTexture = Content.Load<Texture2D>("doors");
+            essentialCrateTexture = Content.Load<Texture2D>("essential record crate");
+            upgradesButton = Content.Load<Texture2D>("upgrades");
+            upgradesScreen = Content.Load<Texture2D>("upgrades screen");
 
             customer1.downFrames = new List<Texture2D>()
                 {
@@ -214,13 +252,18 @@ namespace FINAL_PROJECT
             };
             customer1.upIdle = Content.Load<Texture2D>("customer1IdleUp");
             customer2.upIdle2 = Content.Load<Texture2D>("customer2IdleUp");
+            customer1.currentFrames = customer1.downFrames;
+            customer2.currentFrames = customer2.downFrames;
             downIdle = Content.Load<Texture2D>("customer1IdleDown");
             rightIdle = Content.Load<Texture2D>("customer1IdleRight");
             leftIdle = Content.Load<Texture2D>("customer1IdleLeft");
             customerSprites.Add(customer1);
             customerNPC = customer1;
-            gramps = new gramps(grampsDownFrames, grampsUpFrames, grampsRightFrames, grampsLeftFrames);
+            customerNPC2 = customer2;
+            
             storeTexture = Content.Load<Texture2D>("walls");
+            menuTexture = Content.Load<Texture2D>("record game menu");
+            pauseTexture = Content.Load<Texture2D>("record game pause");
             //itemTextures = Content.Load<Texture2D>("items");
             wallTexture = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
@@ -247,12 +290,72 @@ namespace FINAL_PROJECT
             keyboard = Keyboard.GetState();
             currentMouseState = Mouse.GetState();
             this.Window.Title = currentMouseState.Position.ToString();
+            
+            if (MediaPlayer.State == MediaState.Playing)
+            {
+                xpTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+                if (xpTimer  >= 20f)
+                {
+                    gramps.xp += 20;
+                    xpTimer = 0f;
+                }
+            }
+            //Leveling up
+            if (gramps.xp >= gramps.level * 100)
+            {
+                gramps.xp -= gramps.level * 100;
+                gramps.level++;
+               
+            }
+            customerSpawnTime = Math.Max(5f, 30f - gramps.level);
+            if (screen == Screen.menu)
+            {
+                if (currentMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    if (menuStart.Contains(currentMouseState.Position))
+                    {
+                        screen = Screen.store;
+                    }
+                    else if (menuQuit.Contains(currentMouseState.Position))
+                    {
+                        Exit();
+                    }
+                    else if (menuHTP.Contains(currentMouseState.Position))
+                    {
+                        screen = Screen.howToPlay;
+                    }
+                }
+            }
+            if (screen == Screen.pause)
+            {
+                if (currentMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    if (menuStart.Contains(currentMouseState.Position))
+                    {
+                        screen = Screen.store;
+                    }
+                    else if (menuQuit.Contains(currentMouseState.Position))
+                    {
+                        Exit();
+                    }
+                    else if (menuHTP.Contains(currentMouseState.Position))
+                    {
+                        screen = Screen.howToPlay;
+                    }
+                }
+
+            }
             if (screen == Screen.store)
             {
                 gramps.Update(gameTime, keyboard);
 
                 // TODO: Add your update logic here
+
+                if (currentMouseState.LeftButton == ButtonState.Pressed && upgradesRect.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.upgrades;
+                }
                 if (gramps.Hitbox.Intersects(wallBarrier) || gramps.Hitbox.Intersects(recordCrateBarrier1) || gramps.Hitbox.Intersects(recordCrateBarrier2))
                 {
                     gramps.MoveBack(gramps.Velocity);
@@ -285,8 +388,18 @@ namespace FINAL_PROJECT
                     gramps.money += 40;
                     customerNPC.hasPaid = true;
                 }
+                if (customerNPC2.Hitbox.Intersects(customerPayTrigger) && !customerNPC2.hasPaid)
+                {
+                    gramps.money += 40;
+                    customerNPC2.hasPaid = true;
+                }
 
+                if (GamePad.GetState(PlayerIndex.One).Buttons.Start == ButtonState.Pressed)
+                {
+                    screen = Screen.pause;
+                }
                 customerNPC.Update(gameTime);
+                customerNPC2.Update(gameTime);
             }
             else if (screen == Screen.turntable)
             {
@@ -374,9 +487,33 @@ namespace FINAL_PROJECT
 
                 recordShown = albumSelected;
             }
-            else if (screen == Screen.stock)
+            else if (screen == Screen.upgrades)
             {
-                // TODO: Add your update logic for the stock screen here
+                // TODO: Add your update logic for the upgrades screen here
+                if (currentMouseState.LeftButton == ButtonState.Pressed && turntablePurchaseRect.Contains(currentMouseState.Position))
+                {
+                    if (gramps.money >= 300)
+                    {
+                        gramps.money -= 300;
+                        gramps.turntableOwned = true;
+                    }
+                }
+                if (currentMouseState.LeftButton == ButtonState.Pressed && cratePurchaseRect.Contains(currentMouseState.Position))
+                {
+                    if (gramps.money >= 100)
+                    {
+                        gramps.money -= 100;
+                        gramps.RockCrateOwned = true;
+                    }
+                }
+                if (currentMouseState.LeftButton == ButtonState.Pressed && postersPurchaseRect.Contains(currentMouseState.Position))
+                {
+                    if (gramps.money >= 25)
+                    {
+                        gramps.money -= 25;
+                        gramps.PostersOwned = true;
+                    }
+                }
             }
 
             prevMouseState = currentMouseState;
@@ -391,7 +528,29 @@ namespace FINAL_PROJECT
 
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            if (screen == Screen.store)
+
+
+            if (screen == Screen.menu)
+            {
+                _spriteBatch.Draw(wallTexture, menuQuit, Color.White);
+                _spriteBatch.Draw(wallTexture, menuHTP, Color.White);
+                _spriteBatch.Draw(wallTexture, menuStart, Color.White);
+
+                //Visible
+                _spriteBatch.Draw(menuTexture, menuScreenRect, Color.White);
+                
+                
+            }
+            else if (screen == Screen.pause)
+            {
+                _spriteBatch.Draw(wallTexture, menuQuit, Color.White);
+                _spriteBatch.Draw(wallTexture, menuHTP, Color.White);
+                _spriteBatch.Draw(wallTexture, menuStart, Color.White);
+
+                
+                _spriteBatch.Draw(pauseTexture, menuScreenRect, Color.White);
+            }
+            else if (screen == Screen.store)
             {
                 _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
                 _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
@@ -404,9 +563,14 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(storeTexture, storeRect, Color.White);
                 _spriteBatch.Draw(halfCashRegisterTexture, cashRegisterRect, Color.White);
                 _spriteBatch.Draw(topCashRegisterTexture, cashRegisterRect, Color.White);
-                
-                
+
+
                 //_spriteBatch.Draw(itemTextures, storeRect, Color.White);
+
+                if (gameState == GameState.settingUp)
+                {
+                    _spriteBatch.DrawString(hudFont, "click upgrades button to get started", new Vector2(300, 0), Color.Green);
+                }
                 if (gramps.turntableOwned)
                 {
                     _spriteBatch.Draw(turntableTexture, turntableRect, Color.White);
@@ -431,18 +595,25 @@ namespace FINAL_PROJECT
                 {
                     _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
                 }
+                if (gramps.EssentialsCrateOwned)
+                {
+                    _spriteBatch.Draw(essentialCrateTexture, essentialRect, Color.White);
+                }
                 if (turntableSelectButton)
                 {
                     _spriteBatch.Draw(turntableButton, turntableButtonRect, Color.White);
                 }
-                
-                
-               
+
+
+
                 gramps.Draw(_spriteBatch);
                 customerNPC.Draw(_spriteBatch);
+                customerNPC2.Draw(_spriteBatch);
+
                 _spriteBatch.Draw(doorsTexture, doorsRect, Color.White);
                 _spriteBatch.Draw(topCashRegisterTexture, cashRegisterRect, Color.White);
-                _spriteBatch.DrawString(hudFont,"Money: $" + gramps.money,new Vector2(0, 0),Color.Green);
+                _spriteBatch.DrawString(hudFont, "Money: $" + gramps.money, new Vector2(0, 0), Color.Green);
+                _spriteBatch.Draw(upgradesButton, upgradesRect, Color.White);
             }
             else if (screen == Screen.turntable)
             {
@@ -468,7 +639,10 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(canadianRecordTexture, canadianAlbumRect, Color.White);
                 _spriteBatch.Draw(turntableExitTexture, ownedRecordsExit, Color.White);
             }
-
+            else if (screen == Screen.upgrades)
+            {
+                _spriteBatch.Draw(upgradesScreen, upgradesScreenRect, Color.White);
+            }
 
 
                 _spriteBatch.End();

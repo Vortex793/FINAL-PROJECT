@@ -21,11 +21,13 @@ namespace FINAL_PROJECT
         float frameTimer;
         int frame;
         public bool turntableOwned = true;
-        public bool RockCrateOwned = true;
-        public bool MetalCrateOwned = true;
-        public bool HipHopCrateOwned = true;
-        public bool JazzCrateOwned = true;
-        public bool CanadianCrateOwned = true;
+        public bool RockCrateOwned = false;
+        public bool MetalCrateOwned = false;
+        public bool HipHopCrateOwned = false;
+        public bool JazzCrateOwned = false;
+        public bool CanadianCrateOwned = false;
+        public bool EssentialsCrateOwned = false;
+        public bool PostersOwned = false;
         public List<Texture2D> downFrames;
         public List<Texture2D> upFrames;
         public List<Texture2D> rightFrames;
@@ -33,6 +35,8 @@ namespace FINAL_PROJECT
         public List<Texture2D> currentFrames;
 
         public int money = 500;
+        public int xp = 0;
+        public int level = 1;
         public gramps(List<Texture2D> down, List<Texture2D> up, List<Texture2D> right, List<Texture2D> left)
         {
             velocity = Vector2.Zero;

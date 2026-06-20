@@ -46,7 +46,17 @@ namespace FINAL_PROJECT
         public List<Texture2D> currentFrames;
         public Texture2D upIdle2;
 
+        private gramps player;
+        private static Random rng = new Random();
+        public customer2(gramps g)
+        {
+            player = g;
 
+            position = new Rectangle(340, 600, 35, 50);
+
+            state = customerState.Entering;
+            BuildPathForState(state);
+        }
         public bool hasPaid = false;
         public Rectangle position;
 
@@ -61,6 +71,10 @@ namespace FINAL_PROJECT
         float stepTimer = 0f;
 
         MoveDirection currentDirection = MoveDirection.Idle;
+
+        bool hasBeenServed = false;
+        float waitTimer = 0f;
+        float waitingTime = 15f;
 
         public customer2()
         {
@@ -79,16 +93,58 @@ namespace FINAL_PROJECT
             path.Clear();
             currentStep = 0;
             stepTimer = 0f;
-
+          
             if (newState == customerState.Entering)
             {
                 path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2f });
             }
             else if (newState == customerState.FindingBin)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
-                path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
-                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 0.5f });
+                List<int> availableBins = new List<int>(1);
+
+                if (player.RockCrateOwned)
+                    availableBins.Add(0);
+
+                if (player.MetalCrateOwned)
+                    availableBins.Add(1);
+
+                if (player.HipHopCrateOwned)
+                    availableBins.Add(2);
+
+                if (player.JazzCrateOwned)
+                    availableBins.Add(3);
+
+                if (player.CanadianCrateOwned)
+                    availableBins.Add(4);
+
+                int selectedBin = availableBins[rng.Next(availableBins.Count)];
+
+                switch (selectedBin)
+                {
+                    case 0: // Rock
+                        path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
+                        break;
+
+                    case 1: // Metal
+                        path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2.0f });
+                        break;
+
+                    case 2: // Hip Hop
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.8f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
+                        break;
+
+                    case 3: // Jazz
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.8f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2.0f });
+                        break;
+
+                    case 4: // Canadian
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.5f });
+                        break;
+                }
             }
             else if (newState == customerState.Browsing)
             {
@@ -100,7 +156,10 @@ namespace FINAL_PROJECT
             }
             else if (newState == customerState.Paying)
             {
+                waitTimer = 0f;
                 path.Add(new MovementStep { Direction = MoveDirection.Idle, Time = 3f });
+                
+
             }
             else if (newState == customerState.Leaving)
             {
@@ -108,6 +167,8 @@ namespace FINAL_PROJECT
                 path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1f });
                 path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 1f });
             }
+            
+                
 
         }
 
@@ -234,6 +295,23 @@ namespace FINAL_PROJECT
             {
                 frame = 0;
             }
+            if (state == customerState.Paying)
+            {
+                waitTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                // if too slow → leave, no money
+                if (waitTimer >= waitingTime)
+                {
+                    state = customerState.Leaving;
+                    return;
+                }
+
+                if (!hasBeenServed) 
+                {
+
+                }
+            }
+
         }
 
         public Rectangle Hitbox
