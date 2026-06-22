@@ -20,7 +20,9 @@ namespace FINAL_PROJECT
         Vector2 velocity;
         float frameTimer;
         int frame;
-        public bool turntableOwned = true;
+      
+
+        public bool turntableOwned = false;
         public bool RockCrateOwned = false;
         public bool MetalCrateOwned = false;
         public bool HipHopCrateOwned = false;
@@ -34,6 +36,7 @@ namespace FINAL_PROJECT
         public List<Texture2D> leftFrames;
         public List<Texture2D> currentFrames;
 
+        public int crateOrder = 0;//The order of what crate you get
         public int money = 500;
         public int xp = 0;
         public int level = 1;
