@@ -130,7 +130,7 @@ namespace FINAL_PROJECT
         Texture2D purchaseButtonTexture;
 
         Rectangle storeRect;
-        Texture2D storeTexture, itemTextures, menuTexture, pauseTexture, postersTexture;
+        Texture2D storeTexture, itemTextures, menuTexture, pauseTexture, postersTexture, howToPlayTexture;
         Rectangle window;
 
         KeyboardState keyboard;
@@ -154,6 +154,7 @@ namespace FINAL_PROJECT
         Rectangle recordBinScreenTrigger;
         Texture2D rockCrateTexture, metalCrateTexture, hiphopCrateTexture, jazzCrateTexture, canadianCrateTexture, essentialCrateTexture, cashRegisterTexture, halfCashRegisterTexture,topCashRegisterTexture, doorsTexture;
         Rectangle menuScreenRect = new Rectangle(0, 0, 800, 600);
+        Rectangle howToPlayScreenRect = new Rectangle(0, 0, 800, 600);
         Rectangle rockRect = new Rectangle(0, 0, 800, 600);
         Rectangle metalRect = new Rectangle(0, 0, 800, 600);
         Rectangle hiphopRect = new Rectangle(0, 0, 800, 600);
@@ -168,15 +169,16 @@ namespace FINAL_PROJECT
         Rectangle postersRect = new Rectangle(0, 0, 800, 600);
 
         Texture2D xTexture;
-        Rectangle XRect = new Rectangle(160, 172, 31, 31);
+        Rectangle XRect = new Rectangle(120, 172, 71, 71); //for turntable purchase
+        Rectangle XRectPoster = new Rectangle(650, 172, 71, 71); //poster purchase
 
-        
-        public int rockCrateStock = 3;
-        public int metalCrateStock = 3;
-        public int hiphopCrateStock = 3;
-        public int jazzCrateStock = 3;
-        public int canadianCrateStock = 3;
-        public int essentialCrateStock = 3;
+
+        //public int rockCrateStock = 3;            //moved to gramps class
+        //public int metalCrateStock = 3;
+        //public int hiphopCrateStock = 3;
+        //public int jazzCrateStock = 3;
+        //public int canadianCrateStock = 3;
+        //public int essentialCrateStock = 3;
         float customerSpawnTime = 30f;
         float customerSpawnTimer = 0f;
         List<customer> customers = new List<customer>();
@@ -271,6 +273,7 @@ namespace FINAL_PROJECT
             purchaseButtonTexture = Content.Load<Texture2D>("purchase button");
             postersTexture = Content.Load<Texture2D>("Record Store Posters ");
             xTexture = Content.Load<Texture2D>("X");
+
 
             //Customer 1 Sprites
             customer1DownFrames = new List<Texture2D>()
@@ -389,6 +392,7 @@ namespace FINAL_PROJECT
             storeTexture = Content.Load<Texture2D>("walls");
             menuTexture = Content.Load<Texture2D>("record game menu");
             pauseTexture = Content.Load<Texture2D>("record game pause");
+            howToPlayTexture = Content.Load<Texture2D>("how to play");
             //itemTextures = Content.Load<Texture2D>("items");
             wallTexture = Content.Load<Texture2D>("wallTexture");
             recordCrateBarrierTXR1 = Content.Load<Texture2D>("wallTexture");
@@ -419,17 +423,17 @@ namespace FINAL_PROJECT
 
             keyboard = Keyboard.GetState();
             currentMouseState = Mouse.GetState();
-            this.Window.Title = currentMouseState.Position.ToString();
+            //this.Window.Title = currentMouseState.Position.ToString();
             
             if (MediaPlayer.State == MediaState.Playing)
             {
                 xpTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if (xpTimer  >= 20f)
+                if (xpTimer  >= 25f)
                 {
-                    gramps.xp += 20;
+                    gramps.xp += 25;
                     xpTimer = 0f;
-                    XPBarRect.Width += 20;
+                    XPBarRect.Width += 50;
                 }
             }
             //Leveling up
@@ -437,8 +441,13 @@ namespace FINAL_PROJECT
             {
                 gramps.xp -= gramps.level * 100;
                 gramps.level++;
-               
+                gramps.money += 100;
             }
+            XPBarRect.Width = (int)((gramps.xp / (float)(gramps.level * 100)) * 200);
+
+
+
+
             customerSpawnTime = Math.Max(5f, 30f - gramps.level);
 
             if (screen == Screen.menu)
@@ -580,27 +589,27 @@ namespace FINAL_PROJECT
                             switch (c.selectedBin)
                             {
                                 case 0:
-                                    rockCrateStock--;
+                                    gramps.rockCrateStock--;
                                     break;
 
                                 case 1:
-                                    metalCrateStock--;
+                                    gramps.metalCrateStock--;
                                     break;
 
                                 case 2:
-                                    hiphopCrateStock--;
+                                    gramps.hiphopCrateStock--;
                                     break;
 
                                 case 3:
-                                    jazzCrateStock--;
+                                    gramps.jazzCrateStock--;
                                     break;
 
                                 case 4:
-                                    canadianCrateStock--;
+                                    gramps.canadianCrateStock--;
                                     break;
 
                                 case 5:
-                                    essentialCrateStock--;
+                                    gramps.essentialCrateStock--;
                                     break;
                             }
 
@@ -611,7 +620,7 @@ namespace FINAL_PROJECT
 
                     customerSpawnTime = Math.Max(2f, 20f - gramps.level);
 
-                    Window.Title = customerSpawnTimer.ToString();
+                    //Window.Title = customerSpawnTimer.ToString();
                     if (customerSpawnTimer >= customerSpawnTime)
                     {
 
@@ -670,23 +679,66 @@ namespace FINAL_PROJECT
                             c.countedAsMissed = false;
                         }
                     }
- 
+
+
+
                 }
-                if (missedCustomers >= 5)
+                if (gramps.RockCrateOwned && gramps.MetalCrateOwned && gramps.HipHopCrateOwned && gramps.JazzCrateOwned && gramps.CanadianCrateOwned && gramps.EssentialsCrateOwned)
                 {
                     screen = Screen.gameOver;
                 }
 
-                if (rockCrateStock == 0 || metalCrateStock == 0 || hiphopCrateStock == 0 || jazzCrateStock == 0 || canadianCrateStock == 0 || essentialCrateStock == 0 && !restock)
+                if (gramps.rockCrateStock == 0 || gramps.metalCrateStock == 0 || gramps.hiphopCrateStock == 0 || gramps.jazzCrateStock == 0 || gramps.canadianCrateStock == 0 || gramps.essentialCrateStock == 0 && !restock)
                 {
                     restock = true;
                 }
 
-
+                //Rock
                 if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier1.Contains(currentMouseState.Position) && restock)
                 {
                     gramps.money -= 50;
-                    rockCrateStock = 3;
+                    gramps.rockCrateStock = 3;
+                    restock = false;
+                }
+
+
+                //Metal
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier2.Contains(currentMouseState.Position) && restock)
+                {
+                    gramps.money -= 50;
+                    gramps.metalCrateStock = 3;
+                    restock = false;
+                }
+
+                //HipHop
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier3.Contains(currentMouseState.Position) && restock)
+                {
+                    gramps.money -= 50;
+                    gramps.hiphopCrateStock = 3;
+                    restock = false;
+                }
+
+                //Jazz
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier4.Contains(currentMouseState.Position) && restock)
+                {
+                    gramps.money -= 50;
+                    gramps.jazzCrateStock = 3;
+                    restock = false;
+                }
+
+                //Canadian
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier5.Contains(currentMouseState.Position) && restock)
+                {
+                    gramps.money -= 50;
+                    gramps.canadianCrateStock = 3;
+                    restock = false;
+                }
+
+                //Essential
+                if (currentMouseState.LeftButton == ButtonState.Pressed && recordCrateBarrier6.Contains(currentMouseState.Position) && restock)
+                {
+                    gramps.money -= 50;
+                    gramps.essentialCrateStock = 3;
                     restock = false;
                 }
                 //if (customerNPC.Hitbox.Intersects(customerPayTrigger) && !customerNPC.hasPaid)
@@ -871,8 +923,21 @@ namespace FINAL_PROJECT
                     screen = Screen.store;
                 }
             }
-
-            prevMouseState = currentMouseState;
+            else if (screen == Screen.gameOver)
+            {
+                if (currentMouseState.LeftButton == ButtonState.Pressed && upgradesExitRect.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.menu;
+                }
+            }
+            else if (screen == Screen.howToPlay)
+            {
+                if (currentMouseState.LeftButton == ButtonState.Pressed && menuStart.Contains(currentMouseState.Position))
+                {
+                    screen = Screen.menu;
+                }
+            }
+                prevMouseState = currentMouseState;
             base.Update(gameTime);
         }
 
@@ -884,7 +949,7 @@ namespace FINAL_PROJECT
 
 
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
+            
 
             if (screen == Screen.menu)
             {
@@ -938,7 +1003,7 @@ namespace FINAL_PROJECT
 
                 if (gameState == GameState.settingUp)
                 {
-                    _spriteBatch.DrawString(mainFont, "CLICK UPGRADES TO GET STARTED", new Vector2(100, 100), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "CLICK UPGRADES TO GET STARTED", new Vector2(100, 100), Color.Red);
                 }
                 if (gramps.PostersOwned)
                 {
@@ -952,9 +1017,10 @@ namespace FINAL_PROJECT
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier1, Color.White);
                     _spriteBatch.Draw(rockCrateTexture, rockRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + rockCrateStock, new Vector2(160, 200), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "Albums=" +   gramps.rockCrateStock, new Vector2(160, 200), Color.Green);
 
-                    if (rockCrateStock == 0 && restock)
+                    //Restock sign
+                    if (gramps.rockCrateStock == 0 && restock)
                     {
                         _spriteBatch.Draw(restockSign, recordCrateBarrier1, Color.White);
                     }
@@ -964,32 +1030,62 @@ namespace FINAL_PROJECT
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier2, Color.White);
                     _spriteBatch.Draw(metalCrateTexture, metalRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + metalCrateStock, new Vector2(270, 200), Color.Green);//adjust vector2 to
+                    _spriteBatch.DrawString(mainFont, "Albums=" +   gramps.metalCrateStock, new Vector2(270, 200), Color.Green);//adjust vector2 to
+
+                    //Restock sign
+                    if (gramps.metalCrateStock == 0 && restock)
+                    {
+                        _spriteBatch.Draw(restockSign, recordCrateBarrier2, Color.White);
+                    }
                 }
                 if (gramps.HipHopCrateOwned)
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier3, Color.White);
                     _spriteBatch.Draw(hiphopCrateTexture, hiphopRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + hiphopCrateStock, new Vector2(380, 200), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "Albums=" + gramps.hiphopCrateStock, new Vector2(380, 200), Color.Green);
+
+                    //Restock sign
+                    if (gramps.hiphopCrateStock == 0 && restock)
+                    {
+                        _spriteBatch.Draw(restockSign, recordCrateBarrier3, Color.White);
+                    }
                 }
                 if (gramps.JazzCrateOwned)
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier4, Color.White);
                     _spriteBatch.Draw(jazzCrateTexture, jazzRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + jazzCrateStock, new Vector2(160, 360), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "Albums=" + gramps.jazzCrateStock, new Vector2(160, 360), Color.Green);
+
+                    //Restock sign
+                    if (gramps.jazzCrateStock == 0 && restock)
+                    {
+                        _spriteBatch.Draw(restockSign, recordCrateBarrier4, Color.White);
+                    }
 
                 }
                 if (gramps.CanadianCrateOwned)
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier5, Color.White);
                     _spriteBatch.Draw(canadianCrateTexture, canadianRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + canadianCrateStock, new Vector2(270, 360), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "Albums=" + gramps.canadianCrateStock, new Vector2(270, 360), Color.Green);
+
+                    //Restock sign
+                    if (gramps.canadianCrateStock == 0 && restock)
+                    {
+                        _spriteBatch.Draw(restockSign, recordCrateBarrier5, Color.White);
+                    }
                 }
                 if (gramps.EssentialsCrateOwned)
                 {
                     _spriteBatch.Draw(wallTexture, recordCrateBarrier6, Color.White);
                     _spriteBatch.Draw(essentialCrateTexture, essentialRect, Color.White);
-                    _spriteBatch.DrawString(mainFont, "Albums=" + essentialCrateStock, new Vector2(380, 360), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "Albums=" + gramps.essentialCrateStock, new Vector2(380, 360), Color.Green);
+
+                    //Restock sign
+                    if (gramps.essentialCrateStock == 0 && restock)
+                    {
+                        _spriteBatch.Draw(restockSign, recordCrateBarrier6, Color.White);
+                    }
                 }
                 if (turntableSelectButton)
                 {
@@ -1011,7 +1107,7 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(topCashRegisterTexture, cashRegisterRect, Color.White);
                 _spriteBatch.DrawString(moneyFont, "Money: $" + gramps.money, new Vector2(250, 0), Color.Green);
                 _spriteBatch.Draw(upgradesButton, upgradesRect, Color.White);
-
+                
 
 
 
@@ -1057,22 +1153,31 @@ namespace FINAL_PROJECT
                 _spriteBatch.Draw(purchaseButtonTexture, postersPurchaseRect, Color.White);
                 if (!gramps.turntableOwned && !gramps.RockCrateOwned)
                 {
-                    _spriteBatch.DrawString(mainFont, "PURCHASE THE RECORD PLAYER AND 1 RECORD CRATE TO OPEN THE STORE", new Vector2(100, 100), Color.Green);
+                    _spriteBatch.DrawString(mainFont, "PURCHASE THE RECORD PLAYER AND ", new Vector2(200, 500), Color.Red);
+                    _spriteBatch.DrawString(mainFont, "1 RECORD CRATE TO OPEN THE STORE", new Vector2(200, 520), Color.Red);
                 }
                 if (gramps.turntableOwned)
                 {
                     _spriteBatch.Draw(xTexture, XRect, Color.White);
                 }
+                if (gramps.PostersOwned)
+                {
+                    _spriteBatch.Draw(xTexture, XRectPoster, Color.White);
+                }
+                _spriteBatch.DrawString(moneyFont, "Money: $" + gramps.money, new Vector2(500, 0), Color.Green);
             }
             else if (screen == Screen.gameOver)
             {
-                _spriteBatch.DrawString(mainFont, "GAME OVER", new Vector2(250, 200), Color.Red);
+                _spriteBatch.DrawString(mainFont, "YOU WON", new Vector2(250, 200), Color.Red);
 
-                _spriteBatch.DrawString(mainFont, "Missed 5 customers", new Vector2(220, 260), Color.White);
+                _spriteBatch.DrawString(mainFont, "ALL CRATES UNLOCKED", new Vector2(220, 260), Color.White);
+            }
+            else if (screen == Screen.howToPlay)
+            {
+                _spriteBatch.Draw(howToPlayTexture, howToPlayScreenRect, Color.White);
             }
 
-
-            _spriteBatch.End();
+                _spriteBatch.End();
 
             base.Draw(gameTime);
         }

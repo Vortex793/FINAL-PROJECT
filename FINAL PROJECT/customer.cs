@@ -100,9 +100,9 @@ namespace FINAL_PROJECT
             BuildPathForState(state);
         }
 
-        // ---------------- PATH SYSTEM ----------------
+       
 
-        void BuildPathForState(customerState newState)
+        void BuildPathForState(customerState newState)          //paths for each record crate
         {
             path.Clear();
             currentStep = 0;
@@ -116,23 +116,31 @@ namespace FINAL_PROJECT
             {
                 List<int> availableBins = new List<int>(1);
 
-                if (player.RockCrateOwned )
+                if (player.RockCrateOwned && player.rockCrateStock > 0)
                     availableBins.Add(0);
 
-                if (player.MetalCrateOwned)
+                if (player.MetalCrateOwned && player.metalCrateStock > 0)
                     availableBins.Add(1);
 
-                if (player.HipHopCrateOwned)
+                if (player.HipHopCrateOwned && player.hiphopCrateStock > 0)
                     availableBins.Add(2);
 
-                if (player.JazzCrateOwned)
+                if (player.JazzCrateOwned && player.jazzCrateStock > 0)
                     availableBins.Add(3);
 
-                if (player.CanadianCrateOwned)
+                if (player.CanadianCrateOwned && player.jazzCrateStock > 0)
                     availableBins.Add(4);
 
-                if (player.EssentialsCrateOwned)
+                if (player.EssentialsCrateOwned && player.essentialCrateStock > 0)
                     availableBins.Add(5);
+
+
+                if (availableBins.Count == 0)
+                {
+                    state = customerState.Leaving;
+                    BuildPathForState(state);
+                    return;
+                }
 
                 selectedBin = availableBins[rng.Next(availableBins.Count)];
 
@@ -141,41 +149,78 @@ namespace FINAL_PROJECT
                     case 0: // Rock
                         path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
                         path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 0.50f });
+
+
                         break;
 
                     case 1: // Metal
                         path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
-                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2.0f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.4f });
                         break;
 
                     case 2: // Hip Hop
-                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.8f });
+
+                        path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.8f });
                         path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.1f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 2.5f });
                         break;
 
                     case 3: // Jazz
-                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.8f });
-                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 2.0f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1.3f });
+                       
                         break;
 
                     case 4: // Canadian
-                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.5f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 0.50f });
                         break;
 
-                    case 5:
-                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.0f});
-
-                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.5f });
+                    case 5: //Essential
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 0.5f });
                         break;
                 }
             }
             else if (newState == customerState.Browsing)
             {
                 path.Add(new MovementStep { Direction = MoveDirection.Idle, Time = 3f });
+
+
             }
             else if (newState == customerState.ToCheckout)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+                //path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+                switch (selectedBin)
+                {
+                    case 0: // Rock
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+
+                        break;
+
+                    case 1: // Metal
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 2f });
+                        break;
+
+                    case 2: // Hip Hop
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.2f });
+                        break;
+
+                    case 3: // Jazz
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 3f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.0f });
+                        break;
+
+                    case 4: // Canadian
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 2.5f });
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1.0f });
+                        break;
+
+                    case 5: //Essential
+                        path.Add(new MovementStep { Direction = MoveDirection.Right, Time = 1.0f });
+
+                        path.Add(new MovementStep { Direction = MoveDirection.Up, Time = 1f });
+                        break;
+                }
             }
             else if (newState == customerState.Paying)
             {
@@ -186,7 +231,7 @@ namespace FINAL_PROJECT
             }
             else if (newState == customerState.Leaving)
             {
-                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 1f });
+                path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 2f });
                 path.Add(new MovementStep { Direction = MoveDirection.Left, Time = 1f });
                 path.Add(new MovementStep { Direction = MoveDirection.Down, Time = 1f });
             }
@@ -195,9 +240,9 @@ namespace FINAL_PROJECT
 
         }
 
-        //Move
+     
 
-        void MoveStep()
+        void MoveStep()    //movement
         {
             if (path.Count == 0 || currentStep >= path.Count)
                 return;
@@ -245,9 +290,9 @@ namespace FINAL_PROJECT
             }
         }
 
-        // ---------------- ANIMATION ----------------
+   
 
-        void UpdateAnimation()
+        void UpdateAnimation()           //animating the frames
         {
             switch (currentDirection)
             {
@@ -272,9 +317,9 @@ namespace FINAL_PROJECT
             }
         }
 
-        // ---------------- STATE LOGIC ----------------
+     
 
-        void ArrivedAtDestination()
+        void ArrivedAtDestination()   //customers state logic
         {
             if (state == customerState.Entering)
             {
@@ -286,6 +331,39 @@ namespace FINAL_PROJECT
             }
             else if (state == customerState.Browsing)
             {
+                bool inStock = true;
+
+                switch (selectedBin)
+                {
+                    case 0:
+                        inStock = player.rockCrateStock > 0;
+                        break;
+
+                    case 1:
+                        inStock = player.metalCrateStock > 0;
+                        break;
+                    case 2:
+                        inStock = player.hiphopCrateStock > 0;
+                        break;
+                    case 3:
+                        inStock = player.jazzCrateStock > 0;
+                        break;
+                    case 4:
+                        inStock = player.canadianCrateStock > 0;
+                        break;
+                    case 5:
+                        inStock = player.essentialCrateStock > 0;
+                        break;
+
+                    if (inStock)
+                    {
+                        state = customerState.ToCheckout;
+                    }
+                    else
+                    {
+                        state = customerState.Leaving;               //leaves if no stock
+                    }
+                }
                 state = customerState.ToCheckout;
             }
             else if (state == customerState.ToCheckout)
@@ -299,10 +377,10 @@ namespace FINAL_PROJECT
 
             BuildPathForState(state);
         }
+        
 
-        // ---------------- UPDATE ----------------
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime) //update
         {
             MoveStep();
             UpdateAnimation();

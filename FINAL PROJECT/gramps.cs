@@ -20,7 +20,13 @@ namespace FINAL_PROJECT
         Vector2 velocity;
         float frameTimer;
         int frame;
-      
+
+        public int rockCrateStock = 3;
+        public int metalCrateStock = 3;
+        public int hiphopCrateStock = 3;
+        public int jazzCrateStock = 3;
+        public int canadianCrateStock = 3;
+        public int essentialCrateStock = 3;
 
         public bool turntableOwned = false;
         public bool RockCrateOwned = false;
